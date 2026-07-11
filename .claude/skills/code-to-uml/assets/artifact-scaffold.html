@@ -1,0 +1,279 @@
+<!--
+  code-to-uml · artifact scaffold
+  ================================
+  A starting point for a hand-authored UML artifact. Fill in the real content;
+  keep the token system and the SVG primitive classes. See references/svg-uml-kit.md
+  for the drawing kit and copy-pasteable primitives.
+
+  Publishing rules (Artifact tool):
+   - Do NOT add <!doctype>, <html>, <head>, or <body> — the publisher wraps this.
+   - Everything is self-contained: no CDN scripts, no remote fonts, no external images.
+   - Rename the ownership accents (--collector/--ingest/--async/--surface) to fit the
+     systems you're diagramming; add or drop lanes as needed.
+-->
+<title>SUBJECT lifecycle — SYSTEM A → SYSTEM B</title>
+<style>
+  :root {
+    --paper:#EEF1F5; --sheet:#FBFCFD; --card:#FFFFFF; --card-2:#F1F4F8;
+    --ink:#182230; --muted:#5A6B7C;
+    --line:#B9C4D0; --line-strong:#7C8B9C; --rule:#D6DEE6;
+    /* ownership accents — one per system/lane */
+    --collector:#0E7C86; --ingest:#3E56C4; --async:#6A45B8; --surface:#2E6FB0;
+    /* semantic channel — kept separate from ownership */
+    --warn:#9A6410; --warn-bg:#F8EFDA; --err:#B23225; --err-bg:#FAE6E3; --ok:#286B44; --ok-bg:#E2F0E8;
+    --tint-collector:rgba(14,124,134,0.055); --tint-perf:rgba(62,86,196,0.045);
+    --mono: ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --sans: system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#0E1319; --sheet:#141B23; --card:#1B242E; --card-2:#212C38;
+      --ink:#E4EAF0; --muted:#93A2B2;
+      --line:#3A4756; --line-strong:#617384; --rule:#28323D;
+      --collector:#3FB9C4; --ingest:#8FA4FF; --async:#B79BF2; --surface:#71B2ED;
+      --warn:#E0B060; --warn-bg:#332813; --err:#F0897C; --err-bg:#361B18; --ok:#7FD3A0; --ok-bg:#153020;
+      --tint-collector:rgba(63,185,196,0.08); --tint-perf:rgba(143,164,255,0.06);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:#EEF1F5; --sheet:#FBFCFD; --card:#FFFFFF; --card-2:#F1F4F8;
+    --ink:#182230; --muted:#5A6B7C; --line:#B9C4D0; --line-strong:#7C8B9C; --rule:#D6DEE6;
+    --collector:#0E7C86; --ingest:#3E56C4; --async:#6A45B8; --surface:#2E6FB0;
+    --warn:#9A6410; --warn-bg:#F8EFDA; --err:#B23225; --err-bg:#FAE6E3; --ok:#286B44; --ok-bg:#E2F0E8;
+    --tint-collector:rgba(14,124,134,0.055); --tint-perf:rgba(62,86,196,0.045);
+  }
+  :root[data-theme="dark"] {
+    --paper:#0E1319; --sheet:#141B23; --card:#1B242E; --card-2:#212C38;
+    --ink:#E4EAF0; --muted:#93A2B2; --line:#3A4756; --line-strong:#617384; --rule:#28323D;
+    --collector:#3FB9C4; --ingest:#8FA4FF; --async:#B79BF2; --surface:#71B2ED;
+    --warn:#E0B060; --warn-bg:#332813; --err:#F0897C; --err-bg:#361B18; --ok:#7FD3A0; --ok-bg:#153020;
+    --tint-collector:rgba(63,185,196,0.08); --tint-perf:rgba(143,164,255,0.06);
+  }
+
+  * { box-sizing:border-box; }
+  body { margin:0; }
+  .wrap { background:var(--paper); color:var(--ink); font-family:var(--sans);
+    line-height:1.6; padding:clamp(16px,4vw,52px) clamp(12px,4vw,40px) 64px; -webkit-font-smoothing:antialiased; }
+  .doc { max-width:1120px; margin:0 auto; }
+
+  /* title block */
+  .sheet-head { border:1.5px solid var(--ink); background:var(--sheet); display:grid; grid-template-columns:1fr auto; }
+  .sheet-head .main { padding:26px 28px; }
+  .eyebrow { font-family:var(--mono); font-size:11.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); margin:0 0 12px; }
+  h1 { font-family:var(--mono); font-weight:600; letter-spacing:-.01em; font-size:clamp(24px,4.4vw,40px); line-height:1.08; margin:0; text-wrap:balance; }
+  h1 .sub { display:block; color:var(--muted); font-weight:500; font-size:.5em; letter-spacing:.02em; margin-top:12px; }
+  .sheet-head .meta { border-left:1.5px solid var(--ink); display:grid; grid-template-rows:repeat(4,1fr); min-width:210px; }
+  .sheet-head .meta div { padding:9px 18px; border-bottom:1px solid var(--rule); font-family:var(--mono); font-size:12px; }
+  .sheet-head .meta div:last-child { border-bottom:0; }
+  .sheet-head .meta b { display:block; font-weight:600; letter-spacing:.14em; text-transform:uppercase; font-size:10px; color:var(--muted); margin-bottom:2px; }
+  @media (max-width:660px){ .sheet-head{grid-template-columns:1fr;} .sheet-head .meta{border-left:0;border-top:1.5px solid var(--ink);grid-template-columns:1fr 1fr;grid-template-rows:auto;} .sheet-head .meta div:nth-child(odd){border-right:1px solid var(--rule);} }
+
+  .lede { font-size:17px; max-width:68ch; margin:30px 0 8px; }
+  .lede .k { font-family:var(--mono); font-size:.9em; background:var(--card-2); padding:1px 6px; border-radius:4px; border:1px solid var(--rule); }
+
+  section { margin-top:52px; }
+  .sec-label { display:flex; align-items:baseline; gap:14px; border-bottom:1.5px solid var(--ink); padding-bottom:9px; margin-bottom:8px; }
+  .sec-label .no { font-family:var(--mono); font-size:12px; color:var(--muted); letter-spacing:.1em; }
+  .sec-label h2 { font-family:var(--mono); font-weight:600; font-size:clamp(16px,2.4vw,21px); margin:0; }
+  .sec-note { color:var(--muted); font-size:14.5px; max-width:70ch; margin:12px 0 20px; }
+
+  /* system context */
+  .context { display:grid; grid-template-columns:1fr auto 1fr; gap:18px; align-items:stretch; margin-top:22px; }
+  .repo { border:1.5px solid var(--line); border-radius:12px; background:var(--card); padding:18px 20px; }
+  .repo.a { border-color:var(--collector); } .repo.b { border-color:var(--ingest); }
+  .repo .tag { font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  .repo h3 { font-family:var(--mono); font-size:15px; margin:6px 0 4px; font-weight:600; }
+  .repo.a h3 { color:var(--collector); } .repo.b h3 { color:var(--ingest); }
+  .repo ul { margin:10px 0 0; padding-left:16px; font-size:13px; }
+  .repo li { margin:3px 0; } .repo li code { font-family:var(--mono); font-size:11.5px; color:var(--muted); }
+  .boundary { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-width:96px; }
+  .boundary .pipe { writing-mode:vertical-rl; font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+  .boundary .arrow { font-size:22px; color:var(--ingest); }
+  .boundary .wire { font-family:var(--mono); font-size:11px; background:var(--card-2); border:1px solid var(--rule); border-radius:20px; padding:4px 10px; text-align:center; }
+  @media (max-width:720px){ .context{grid-template-columns:1fr;} .boundary{flex-direction:row;min-width:0;} .boundary .pipe{writing-mode:horizontal-tb;} .boundary .arrow{transform:rotate(90deg);} }
+
+  /* diagram plate */
+  .plate { border:1.5px solid var(--line); border-radius:12px; background:var(--sheet); overflow:hidden; margin-top:20px; }
+  .plate .cap { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:11px 16px; border-bottom:1px solid var(--rule); background:var(--card); }
+  .plate .cap .t { font-family:var(--mono); font-size:13px; font-weight:600; }
+  .plate .cap .hint { font-family:var(--mono); font-size:11px; color:var(--muted); }
+  .scroll { overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; }
+  .scroll svg { display:block; height:auto; }
+
+  /* SVG primitive classes — style shapes ONLY through these (theme-safe) */
+  .lane-bg-c { fill:var(--tint-collector); } .lane-bg-p { fill:var(--tint-perf); }
+  .divider { stroke:var(--rule); stroke-width:1; }
+  .divider.net { stroke:var(--ingest); stroke-width:1.4; stroke-dasharray:7 5; opacity:.75; }
+  .lane-title { font-family:var(--mono); font-size:13px; font-weight:600; fill:var(--ink); }
+  .lane-sub { font-family:var(--mono); font-size:10.5px; fill:var(--muted); letter-spacing:.05em; }
+  .node { fill:var(--card); stroke-width:1.6; }
+  .node.collector { stroke:var(--collector); } .node.ingest { stroke:var(--ingest); }
+  .node.async { stroke:var(--async); } .node.surface { stroke:var(--surface); }
+  .node.warn { fill:var(--warn-bg); stroke:var(--warn); } .node.err { fill:var(--err-bg); stroke:var(--err); }
+  .node.ok { fill:var(--ok-bg); stroke:var(--ok); } .node.muted { fill:var(--card-2); stroke:var(--line); }
+  .dec { fill:var(--card-2); stroke:var(--line-strong); stroke-width:1.5; }
+  .nt { font-family:var(--mono); font-size:12.5px; fill:var(--ink); }
+  .nt.sm { font-size:11px; } .nt.mut { fill:var(--muted); }
+  .nt.warn { fill:var(--warn); } .nt.err { fill:var(--err); } .nt.ok { fill:var(--ok); }
+  .term { fill:var(--ink); stroke:none; } .term-ring { fill:none; stroke:var(--ink); stroke-width:1.8; }
+  .flow { fill:none; stroke:var(--line-strong); stroke-width:1.7; } .flow.ret { stroke-dasharray:5 4; }
+  .flbl { font-family:var(--mono); font-size:10.5px; fill:var(--muted); }
+  .flbl.yes { fill:var(--ok); } .flbl.no { fill:var(--err); }
+  .life { stroke:var(--line); stroke-width:1.2; stroke-dasharray:3 4; }
+  .actbar { fill:var(--card-2); stroke:var(--line-strong); stroke-width:1; }
+  .head-box { fill:var(--card); stroke-width:1.6; }
+  .frag { fill:none; stroke:var(--line-strong); stroke-width:1.2; stroke-dasharray:4 4; }
+  .frag-tab { fill:var(--card-2); stroke:var(--line-strong); stroke-width:1; }
+  .frag-lbl { font-family:var(--mono); font-size:10.5px; font-weight:600; fill:var(--ink); }
+  .subttl { font-family:var(--mono); font-size:11px; fill:var(--muted); letter-spacing:.14em; text-transform:uppercase; }
+
+  /* legend */
+  .legend { display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:18px; padding:16px 18px; border:1px solid var(--rule); border-radius:10px; background:var(--card); }
+  .legend .item { display:flex; align-items:center; gap:9px; font-family:var(--mono); font-size:12px; }
+  .legend .swatch { width:26px; height:16px; border-radius:3px; border:1.6px solid; flex:none; }
+
+  /* table */
+  .tbl-scroll { overflow-x:auto; border:1px solid var(--rule); border-radius:10px; margin-top:18px; }
+  table { border-collapse:collapse; width:100%; min-width:720px; font-size:13px; }
+  thead th { font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; text-align:left; color:var(--muted); padding:11px 14px; border-bottom:1.5px solid var(--line); background:var(--card); }
+  tbody td { padding:10px 14px; border-bottom:1px solid var(--rule); vertical-align:top; }
+  tbody tr:last-child td { border-bottom:0; }
+  code { font-family:var(--mono); font-size:12px; background:var(--card-2); border:1px solid var(--rule); border-radius:4px; padding:1px 5px; }
+  td code { background:none; border:0; padding:0; color:var(--ingest); }
+
+  footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--rule); font-size:13px; color:var(--muted); }
+  footer code { font-size:11.5px; }
+</style>
+
+<div class="wrap"><div class="doc">
+
+  <header class="sheet-head">
+    <div class="main">
+      <p class="eyebrow">Architecture reference</p>
+      <h1>SUBJECT lifecycle
+        <span class="sub">How a SUBJECT is collected, stored, processed, and surfaced</span>
+      </h1>
+    </div>
+    <div class="meta">
+      <div><b>System A</b>repo-a</div>
+      <div><b>System B</b>repo-b</div>
+      <div><b>Seam</b>the boundary that crosses</div>
+      <div><b>Drawn</b>YYYY-MM-DD · branch</div>
+    </div>
+  </header>
+
+  <p class="lede">One-paragraph orientation: what the subject is, where it starts, where it ends up, and the single seam between the systems. Reference key contract values with <span class="k">inline mono</span>.</p>
+
+  <!-- 00 · SYSTEM CONTEXT (only when >1 system) -->
+  <section>
+    <div class="sec-label"><span class="no">00</span><h2>Two systems, one seam</h2></div>
+    <div class="context">
+      <div class="repo a"><span class="tag">System A</span><h3>repo-a</h3>
+        <ul><li>entry point · <code>Class::method</code></li><li>what it holds</li></ul></div>
+      <div class="boundary"><span class="pipe">seam</span><span class="arrow">→</span><span class="wire">payload<br>shape</span></div>
+      <div class="repo b"><span class="tag">System B</span><h3>repo-b</h3>
+        <ul><li>receiver · <code>Controller</code></li><li>what it does</li></ul></div>
+    </div>
+    <div class="legend" aria-label="Notation key">
+      <span class="item"><span class="swatch" style="border-color:var(--collector)"></span>System A step</span>
+      <span class="item"><span class="swatch" style="border-color:var(--ingest)"></span>Ingest (sync)</span>
+      <span class="item"><span class="swatch" style="border-color:var(--async)"></span>Async</span>
+      <span class="item"><span class="swatch" style="border-color:var(--surface)"></span>Surface / read</span>
+      <span class="item"><span class="swatch" style="border-color:var(--warn);background:var(--warn-bg)"></span>Degraded</span>
+      <span class="item"><span class="swatch" style="border-color:var(--err);background:var(--err-bg)"></span>Reject / fail</span>
+    </div>
+  </section>
+
+  <!-- 01 · ACTIVITY DIAGRAM (swimlane staircase) -->
+  <section>
+    <div class="sec-label"><span class="no">01</span><h2>Activity diagram — full lifecycle</h2></div>
+    <p class="sec-note">Time flows down; systems flow right across the swimlanes. Diamonds are decisions; coloured branches are the degraded, rejected, and suppressed paths the plain spine hides.</p>
+    <div class="plate">
+      <div class="cap"><span class="t">activity · collect → store → process → surface</span><span class="hint">scroll →</span></div>
+      <div class="scroll">
+        <!-- viewBox sized to content; scale via width/height:auto. See svg-uml-kit.md §3-5. -->
+        <svg viewBox="0 0 720 420" width="720" role="img" aria-label="Activity diagram — replace with the real flow">
+          <defs>
+            <marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L9,4 L0,8 z" fill="var(--line-strong)"/></marker>
+          </defs>
+          <!-- lane bg + divider + titles -->
+          <rect class="lane-bg-c" x="0" y="0" width="360" height="420"/>
+          <rect class="lane-bg-p" x="360" y="0" width="360" height="420"/>
+          <line class="divider net" x1="360" y1="8" x2="360" y2="412"/>
+          <text class="lane-title" x="20" y="30">System A</text><text class="lane-sub" x="20" y="48">repo-a</text>
+          <text class="lane-title" x="380" y="30">System B</text><text class="lane-sub" x="380" y="48">repo-b</text>
+          <!-- EXAMPLE nodes (replace) -->
+          <circle class="term" cx="180" cy="90" r="12"/>
+          <path class="flow" d="M180,102 L180,124" marker-end="url(#ah)"/>
+          <g><rect class="node collector" x="55" y="124" width="250" height="60" rx="9"/>
+            <text class="nt" x="180" y="150" text-anchor="middle">Entry action</text>
+            <text class="nt sm mut" x="180" y="168" text-anchor="middle">Class::method</text></g>
+          <path class="flow" d="M305,236 L403,236" marker-end="url(#ah)"/>
+          <g><rect class="node ingest" x="415" y="206" width="250" height="60" rx="9"/>
+            <text class="nt" x="540" y="232" text-anchor="middle">Receiver action</text>
+            <text class="nt sm mut" x="540" y="250" text-anchor="middle">Controller@store</text></g>
+          <path class="flow" d="M180,184 L180,300 L415,300 L415,300" marker-end="url(#ah)"/>
+          <polygon class="dec" points="540,300 610,340 540,380 470,340"/>
+          <text class="nt sm" x="540" y="336" text-anchor="middle">guard</text>
+          <text class="nt sm" x="540" y="352" text-anchor="middle">passes?</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · SEQUENCE DIAGRAM (participant grid) -->
+  <section>
+    <div class="sec-label"><span class="no">02</span><h2>Sequence — store &amp; process</h2></div>
+    <p class="sec-note">Who calls whom, in order. Solid = sync call, dashed = return, open head = async dispatch. <em>alt</em> frames enclose mutually-exclusive branches.</p>
+    <div class="plate">
+      <div class="cap"><span class="t">sequence · caller → receiver → store</span><span class="hint">scroll →</span></div>
+      <div class="scroll">
+        <svg viewBox="0 0 700 320" width="700" role="img" aria-label="Sequence diagram — replace with the real messages">
+          <defs>
+            <marker id="sh" markerWidth="11" markerHeight="10" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="var(--line-strong)"/></marker>
+            <marker id="so" markerWidth="12" markerHeight="10" refX="10" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8" fill="none" stroke="var(--line-strong)" stroke-width="1.4"/></marker>
+          </defs>
+          <!-- lifelines + heads (x centres: 110 350 590) -->
+          <line class="life" x1="110" y1="92" x2="110" y2="300"/>
+          <line class="life" x1="350" y1="92" x2="350" y2="300"/>
+          <line class="life" x1="590" y1="92" x2="590" y2="300"/>
+          <rect class="head-box node collector" x="44" y="40" width="132" height="48" rx="8"/>
+          <text class="nt sm" x="110" y="69" text-anchor="middle">Caller</text>
+          <rect class="head-box node ingest" x="278" y="40" width="144" height="48" rx="8"/>
+          <text class="nt sm" x="350" y="69" text-anchor="middle">Receiver</text>
+          <rect class="head-box node async" x="522" y="40" width="136" height="48" rx="8"/>
+          <text class="nt sm" x="590" y="69" text-anchor="middle">Store</text>
+          <!-- activation + messages (replace) -->
+          <rect class="actbar" x="344" y="128" width="12" height="120"/>
+          <path class="flow" d="M110,128 L338,128" marker-end="url(#sh)"/>
+          <text class="flbl" x="116" y="120">call(payload)</text>
+          <path class="flow" d="M356,164 L578,164" marker-end="url(#sh)"/>
+          <text class="flbl" x="362" y="156">persist(row)</text>
+          <path class="flow ret" d="M578,196 L358,196" marker-end="url(#so)"/>
+          <text class="flbl" x="420" y="212">result</text>
+          <path class="flow ret" d="M344,244 L116,244" marker-end="url(#so)"/>
+          <text class="flbl" x="140" y="236">return</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · DATA MODEL (only when persistence is central) -->
+  <section>
+    <div class="sec-label"><span class="no">03</span><h2>Where a SUBJECT lives</h2></div>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Table</th><th>Holds</th><th>Key columns</th><th>Role in the lifecycle</th></tr></thead>
+        <tbody>
+          <tr><td><code>table_name</code></td><td>what</td><td><code>unique(...)</code>, FKs</td><td>its part in the subject's journey</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Reading the diagrams.</strong> Rounded boxes are activities/participants; diamonds are decisions; solid arrows are synchronous calls, dashed arrows are returns, open arrowheads mark asynchronous dispatch; <em>alt</em> frames enclose mutually-exclusive branches.</p>
+    <p style="margin-top:10px"><strong>Sources.</strong> Drawn from <code>repo-a</code> (<code>Class::method</code>, …) and <code>repo-b</code> (<code>Controller</code>, …). List the real file:line / class anchors here so the diagram is auditable, and flag any node marked inferred.</p>
+  </footer>
+
+</div></div>

@@ -1,0 +1,14 @@
+{
+  "$comment": "Shared runtime guardrails. Merge into your ~/.claude/settings.json or a project .claude/settings.json. Claude Code enforces 'deny' rules regardless of what any skill attempts.",
+  "permissions": {
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf *)",
+      "Bash(git push origin *)",
+      "Bash(curl * | sh)",
+      "Bash(curl * | bash)",
+      "Bash(:(){ :|:& };:)"
+    ]
+  }
+}

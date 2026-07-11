@@ -1,0 +1,10 @@
+.DS_Store
+
+# CPM session state (transient execution artifacts — never deliverables)
+docs/plans/.cpm-*
+
+# Machine-local Claude settings
+settings.local.json
+
+# IDE
+.idea/
