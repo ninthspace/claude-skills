@@ -1,0 +1,5 @@
+# The ASD-STE100 standard is free of charge but NOT redistributable (see
+# official-copy.md). Each user drops their own copy into this folder; it must
+# never be committed to the shared repo. This rule travels with the skill so the
+# protection holds under both install methods (--add-dir and install.sh symlink).
+ASD-STE100*

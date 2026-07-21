@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# pre-commit — block the non-redistributable ASD-STE100 standard from ever being
+# committed to this shared repo.
+#
+# The stakeholder-rewrite skill reads a local copy of the standard from its
+# references/ folder. That folder lives inside this repo, so a .gitignore keeps
+# the PDF untracked. This hook is the harder backstop: `git add -f` bypasses
+# .gitignore, but not a pre-commit hook. Anything whose name starts with
+# ASD-STE100 is refused regardless of how it was staged.
+#
+# Activation (both are harmless to re-run):
+#   ./install.sh                       # sets core.hooksPath for you
+#   git config core.hooksPath .githooks  # manual, e.g. for --add-dir users
+
+set -euo pipefail
+
+blocked="$(git diff --cached --name-only --diff-filter=ACM \
+  | grep -E '(^|/)ASD-STE100[^/]*$' || true)"
+
+if [ -n "${blocked}" ]; then
+  {
+    echo "✋ pre-commit: refusing to commit the ASD-STE100 standard."
+    echo
+    echo "These staged files match ASD-STE100* and are NOT redistributable:"
+    echo "${blocked}" | sed 's/^/  - /'
+    echo
+    echo "The standard is free of charge but its licence forbids redistribution,"
+    echo "so it must never land in this shared repo. Unstage it with:"
+    echo "  git restore --staged <file>"
+    echo
+    echo "See .claude/skills/stakeholder-rewrite/references/official-copy.md."
+  } >&2
+  exit 1
+fi

@@ -1,0 +1,20 @@
+# Coverage Matrix: Audit Engine & Nova Taxonomy
+
+**Source spec**: docs/specifications/01-spec-nova-to-filament-migration-skill.md  
+**Epic**: docs/epics/01-01-epic-audit-engine-taxonomy.md  
+**Date**: 2026-07-20
+
+> **Verification rule**: Verification status (✓) is bound to criterion text. Any change to a story criterion or its spec mapping resets that row to unverified.
+
+| # | Spec Requirement | Spec Text (verbatim) | Story Criterion (verbatim) | Covered by | Spec Test Approach | Verified |
+|---|------------------|----------------------|----------------------------|------------|--------------------|----------|
+| 1 | FR1 Invocation & version resolution | "Accept a target Nova app path and a pinned target Filament version (e.g. `^4.0`). Resolve the installed Nova version from the target's `composer.lock`. Refuse to run if no Nova installation is detected." | "Accepts a target Nova app path and a pinned target Filament version (e.g. `^4.0`)" | Story 1 | `[manual]` | ✓ |
+| 2 | FR1 Invocation & version resolution | "Resolve the installed Nova version from the target's `composer.lock`." | "Resolves the installed Nova version from the target's `composer.lock` and records it for stamping" | Story 1 | `[manual]` | ✓ |
+| 3 | FR1 Invocation & version resolution | "Refuse to run if no Nova installation is detected." | "must NOT emit a spec when no Nova install is detected at the target" | Story 1 | `[manual]` | ✓ |
+| 4 | FR2 Fixed Nova taxonomy checklist | "Walk every Nova primitive category — Resources, all Field types, Actions, Filters, Lenses, all four Metric types (value/trend/partition/progress), Dashboards, Cards, custom Tools, policies/authorization, relationships — and report a count for each, including zero." | "`references/nova-taxonomy.md` enumerates every Nova primitive category: Resources, all Field types, Actions, Filters, Lenses, all four Metric types (value/trend/partition/progress), Dashboards, Cards, custom Tools, policies/authorization, relationships" | Story 2 | `[manual]` | ✓ |
+| 5 | FR2 Fixed Nova taxonomy checklist | "report a count for each, including zero. Completeness is achieved by construction." | "The audit walks every category and reports a count for each, including zero-count categories" | Story 2 | `[manual]` | ✓ |
+| 6 | FR2 Fixed Nova taxonomy checklist | (must-NOT, Section 6b) "**must NOT** silently omit any taxonomy category" | "must NOT silently omit any taxonomy category" | Story 2 | `[manual]` | ✓ |
+| 7 | FR3 Implementation-depth audit | "For each found primitive, read the implementation body (`fields()`, `Action::handle()`, filter/lens/metric logic, policy methods) and its callbacks (`resolveUsing`/`displayUsing`/`dependsOn`/`canSee`, custom validation, computed accessors)." | "For each found primitive, reads the implementation body (`fields()`, `Action::handle()`, filter/lens/metric logic, policy methods) and callbacks (`resolveUsing`/`displayUsing`/`dependsOn`/`canSee`, custom validation, computed accessors)" | Story 3 | `[manual]` | ✓ |
+| 8 | FR3 Implementation-depth audit | "Capture behaviour, not just declarations, with `file:line (symbol)` citations." | "Records behaviour, not just the declared type, with `file:line (symbol)` citations" | Story 3 | `[manual]` | ✓ |
+| 9 | FR3 Implementation-depth audit | (must-NOT, Section 6b) "**must NOT** classify a customised item as `direct` when its behaviour has no direct Filament equivalent" | "must NOT classify a customised item as `direct` when its behaviour has no direct Filament equivalent" | Story 3 | `[manual]` | ✓ |
+| 10 | FR8 Tooling discovery | "Attempt discovery of authoritative tooling (Laravel Boost `application-info`/`search-docs`, `composer`, `artisan`) and prefer it when present, while degrading gracefully to `Glob`/`Grep`/`Read` when absent. Mandatory behaviour, not a mandatory dependency." | "Attempts discovery of authoritative tooling (Laravel Boost `application-info`/`search-docs`, `composer`, `artisan`) and prefers it when present" / "Runs to completion using `Glob`/`Grep`/`Read` fallbacks when tooling is absent (graceful degradation)" | Story 4 | `[manual]` | ✓ |
