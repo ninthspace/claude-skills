@@ -7,6 +7,10 @@ description: Produce a plain-language version of a technical document for a non-
 
 Turn a technical document into a version a non-technical stakeholder can read, act on, and quote accurately, using ASD-STE100 Simplified Technical English as the discipline behind the rewrite.
 
+## The pair, and how to pick
+
+This skill has an operational sibling, [`operator-rewrite`](../operator-rewrite/SKILL.md). **Pick by what the reader does after reading.** If they **decide, approve, fund, or oversee** — a board, trustees, funders, councillors, remote from the day-to-day — this is the right skill: it *strips* implementation detail down to risk, cost, timescale, and the decision requested. If they **operate, follow, or act repeatedly** — front-line staff, process owners, the desk that runs the thing — use `operator-rewrite` instead: it *protects* every rule, state, exception, and sequence the reader must not get wrong. If the audience you have been given actually runs the system, say so once and offer to switch. When a document genuinely serves both audiences, produce two artifacts, not one compromise.
+
 ## Why STE, and where it stops
 
 STE was built so that an aircraft engineer whose first language is not English cannot misread a maintenance instruction. That makes it excellent at removing ambiguity, and it is the reason this skill uses it. But STE was designed for procedures and descriptions of equipment, not for persuasion, context, or governance. A board paper written in strict STE reads like a manual and will not carry a decision.
