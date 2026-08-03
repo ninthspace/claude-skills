@@ -8,6 +8,30 @@ All notable changes to `claude-skills` are documented here. The format follows
 
 ### Added
 
+- **Output styles as a second distributable asset class.** The repo now ships
+  `.claude/output-styles/*.md` alongside `.claude/skills/`, with its own install
+  path — Claude Code reads output styles only from `~/.claude/output-styles/` (or a
+  project `.claude/output-styles/`) and `claude --add-dir` does **not** register
+  them, so `./install.sh` is required for styles regardless of how skills were
+  installed. Symlinked styles were verified to be honoured, so the installer
+  symlinks rather than copies, keeping `git pull` as the whole update story.
+  - **`Terse`** output style — answer-first, minimal prose: leads with the result,
+    one line per file touched, no preamble or recap. Explicitly exempts code,
+    commits, generated documents, and plan-mode plans from the brevity rule, and
+    holds investigation and verification at full depth; fuller reasoning is
+    available on request.
+  - **`terse`** skill — toggles that style on or off by editing only the
+    `outputStyle` key in the first settings file that already defines it
+    (project `settings.local.json` → project `settings.json` → global), treating
+    the built-in `default` as "off".
+  - `install.sh` — second symlink loop over `.claude/output-styles/*.md` into
+    `~/.claude/output-styles/`, with its own count line; skipped cleanly when the
+    directory is absent.
+  - `README.md` — **Included output styles** table, an **Output styles** install
+    section, an **Adding an output style** contributor section, and a caveat on the
+    `--add-dir` route noting it does not cover styles.
+  - `CLAUDE.md` — sync rule extended to cover the output-styles table and the
+    output-styles conventions.
 - **`code-to-uml`** skill — maps how a subject (a comment, an order, a webhook, a
   job) moves through one or more repositories from the real code, then builds a
   **self-contained HTML artifact** of hand-authored SVG **UML activity and sequence

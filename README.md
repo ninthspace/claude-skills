@@ -4,8 +4,10 @@ A collection of shared [Claude Code](https://code.claude.com) skills.
 
 **Version 1.0.0** — see [CHANGELOG.md](CHANGELOG.md) for what's in this release.
 
-Skills live under `.claude/skills/`, one folder per skill. Runtime behaviour is
-constrained by the shared `settings.json` deny-list.
+Skills live under `.claude/skills/`, one folder per skill. Output styles live under
+`.claude/output-styles/`, one `.md` file per style — these install differently from
+skills, see [Output styles](#output-styles). Runtime behaviour is constrained by the
+shared `settings.json` deny-list.
 
 ## Included skills
 
@@ -22,6 +24,13 @@ constrained by the shared `settings.json` deny-list.
 | [`code-to-uml`](.claude/skills/code-to-uml/) | Maps how a subject moves through one or more repositories from the real code, then builds a self-contained HTML artifact of hand-authored SVG UML activity and sequence diagrams (plus optional system-context and data-model panels). No Mermaid/CDN — the Artifact CSP blocks them. |
 | [`stakeholder-rewrite`](.claude/skills/stakeholder-rewrite/) | Rewrites a technical document into a plain-language version for a non-technical audience — board, trustees, funders, service managers, the public — using ASD-STE100 Simplified Technical English as the discipline. Applies the STE rules that remove ambiguity and relaxes the maintenance-manual register a governance paper doesn't need. Labels output "plain-language, STE-informed" unless genuine compliance is checked, and preserves every figure, date, and caveat exactly. |
 | [`operator-rewrite`](.claude/skills/operator-rewrite/) | The operational sibling of `stakeholder-rewrite`: rewrites a technical document for the people who *run* the thing — front-line staff, process owners, new starters — as a user guide, quick reference, runbook/SOP, or "what changes for you" note. Where the sibling strips detail, this *protects* every rule, state, exception, and sequence, extracting an operational spine first and gating on "did every rule survive?". Applies STE's procedural machinery in full (its home turf). Reuses the sibling's ASD-STE100 references by path. |
+| [`terse`](.claude/skills/terse/) | Toggles the **Terse** output style on or off by flipping the `outputStyle` key in your Claude Code settings ("off" is the built-in `default`). Ships the style itself at [`.claude/output-styles/terse.md`](.claude/output-styles/terse.md) — answer-first, minimal-prose replies with full detail on request; brevity governs the report, never the work. Requires the output-style install step (see [Output styles](#output-styles)). |
+
+## Included output styles
+
+| Output style | What it does |
+| --- | --- |
+| [`Terse`](.claude/output-styles/terse.md) | Answer-first, minimal prose. Leads with the result, one line per file touched, no preamble or recap — while explicitly exempting code, commits, documents, and plans from the brevity rule, and keeping investigation and verification at full depth. Toggled by the [`terse`](.claude/skills/terse/) skill. |
 
 ## How skills are discovered
 
@@ -52,11 +61,16 @@ To update later:
 cd ~/code/claude-skills && git pull
 ```
 
+> **`--add-dir` covers skills only.** It does **not** load this repo's output styles,
+> so the `terse` skill will find no style to select. Either run `./install.sh` once in
+> your clone as well, or symlink the style by hand — see
+> [Output styles](#output-styles).
+
 ## Install (alternative: symlink into your personal skills dir)
 
 If you would rather have the skills appear under `~/.claude/skills/` without the
-alias, run the bundled installer. It symlinks each skill folder into place, so
-`git pull` keeps them current.
+alias, run the bundled installer. It symlinks each skill folder into place, **and
+symlinks the output styles too**, so `git pull` keeps everything current.
 
 ```bash
 git clone https://github.com/ninthspace/claude-skills.git ~/code/claude-skills
@@ -68,6 +82,30 @@ cd ~/code/claude-skills
 > works in practice, but if you hit issues, edit `install.sh` to copy (`cp -R`)
 > instead of symlink — at the cost of re-running it after each `git pull`.
 
+## Output styles
+
+Output styles change how Claude *writes back to you*; they do not change what it
+does. They install differently from skills, and the difference is easy to trip over:
+
+- Claude Code reads output styles **only** from `~/.claude/output-styles/` or a
+  project's `.claude/output-styles/`.
+- `claude --add-dir` does **not** register output styles from the added directory —
+  unlike skills, there is no auto-discovery path.
+
+So `./install.sh` is the install route regardless of which option you chose for
+skills. It symlinks every `.claude/output-styles/*.md` into
+`~/.claude/output-styles/`. To do it by hand for a single style:
+
+```bash
+mkdir -p ~/.claude/output-styles
+ln -sfn ~/code/claude-skills/.claude/output-styles/terse.md ~/.claude/output-styles/terse.md
+```
+
+Switch styles with `/output-style`, or — for `Terse` specifically — the
+[`terse`](.claude/skills/terse/) skill, which flips the `outputStyle` key in your
+settings for you. Symlinked output styles are honoured by Claude Code; as with
+skills, swap the `ln -sfn` in `install.sh` for `cp` if your setup disagrees.
+
 ## Adding a skill
 
 1. Create a branch.
@@ -78,6 +116,18 @@ cd ~/code/claude-skills
 
 See the [Claude Code skills docs](https://code.claude.com/docs/en/skills) for the
 `SKILL.md` format.
+
+## Adding an output style
+
+1. Create a branch.
+2. Add `.claude/output-styles/<name>.md` — a single file, with `name:` and
+   `description:` front-matter. `install.sh` picks it up automatically (it globs the
+   directory), so the installer needs no change.
+3. Add a row to the **Included output styles** table above.
+4. Open a pull request.
+
+See the [output styles docs](https://code.claude.com/docs/en/output-styles) for the
+front-matter fields, including `keep-coding-instructions`.
 
 ## Security
 
