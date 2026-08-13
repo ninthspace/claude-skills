@@ -17,7 +17,12 @@ The diagrams are drawn from the **actual code**, not a plausible-looking guess. 
 
 **1. Accuracy is the product.** Every node, lifeline, message, decision, and table must map to code you have actually read — real `ClassName`, `route`, `Job`, `method()`, column names, real branches. Explore first, draw second. A smaller diagram that is *true* beats a complete one that is invented. Where the code is genuinely ambiguous, mark the node **inferred** rather than asserting flow that isn't there.
 
-**2. Self-contained SVG — never Mermaid.** The Artifact runtime enforces a strict Content-Security-Policy: no external scripts, no CDN requests, no remote fonts. Mermaid, PlantUML, kroki, and every other diagram-renderer that loads JS from a CDN are therefore **unavailable** — they render nothing. Hand-author inline SVG instead. This is a feature, not a limitation: it gives full control over layout, theming, and legibility, and it always works.
+**2. Self-contained SVG — never Mermaid.** Hand-author inline SVG for every diagram. Two separate reasons, and it matters which is which:
+
+- **Mermaid is available and still not used here.** The Artifact runtime renders Mermaid natively (```mermaid fences, or `<pre class="mermaid">` blocks) — no CDN involved. It is ruled out on *control*: its auto-layout decides participant order, spacing, and what the eye lands on, and it has no way to express the things these diagrams depend on — a swimlane coloured by owning repo, an `inferred` node marked as such, a nested fragment placed exactly where the branch sits, or a token-driven palette that survives both themes. A diagram whose layout can re-flow under you is the wrong substrate for an auditable claim about code.
+- **Everything else is genuinely blocked.** The runtime enforces a strict Content-Security-Policy: no external scripts, no CDN requests, no remote fonts. PlantUML, kroki, and every other renderer that fetches JS from a CDN is therefore **unavailable** — it renders nothing, silently.
+
+Hand-authored SVG gives full control over layout, theming, and legibility, and it always works.
 
 ## Native dependencies & degradation
 
@@ -87,7 +92,7 @@ After publishing, surface the **modelling judgement calls** you made — a band 
 ## Guardrails
 
 - **Accuracy over completeness.** Verified real names only. Mark inferred nodes. Never invent flow to fill a diagram.
-- **No Mermaid / PlantUML / kroki / CDN anything.** Inline, hand-authored SVG only — the CSP blocks the alternatives silently.
+- **No Mermaid / PlantUML / kroki / CDN anything.** Inline, hand-authored SVG only. Mermaid renders natively but is ruled out on layout control; the CDN-based renderers are blocked by the CSP and fail silently.
 - **Match the diagram set to the prompt.** Don't ship a sequence diagram for a pure control-flow ask, or an activity diagram when the question is really "who calls whom, in what order".
 - **Multi-repo: name the seam.** State what crosses each boundary and whether it is sync or async; colour lanes by owning system.
 - **Legibility beats density.** Split diagrams, scroll wide ones, theme both modes, don't overcrowd a lane.

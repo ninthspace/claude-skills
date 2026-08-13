@@ -4,10 +4,32 @@ All notable changes to `claude-skills` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.1.0] — 2026-08-13
+
+Six new skills, plus **output styles** as a second distributable asset class with
+its own install path.
 
 ### Added
 
+- **`nova-to-filament`** skill — audits a Laravel Nova app and all its customisation
+  against a fixed taxonomy of Nova primitives, then emits a cpm-compliant migration
+  spec under `docs/specifications/` (feeding `/cpm:epics`) mapping every primitive
+  one-to-one onto a specified FilamentPHP version. Built from a reconciliation ledger
+  with a hard gate; anything unmappable is flagged `needs-human` / `[rebuild]` rather
+  than given a faked mapping. Plans the migration — it does not perform it.
+- **`stakeholder-rewrite`** skill — rewrites a technical document into plain language
+  for a non-technical audience (board, trustees, funders, service managers, the
+  public) using ASD-STE100 Simplified Technical English as the discipline. Applies
+  the STE rules that remove ambiguity, relaxes the maintenance-manual register a
+  governance paper does not need, preserves every figure, date, and caveat exactly,
+  and labels output "plain-language, STE-informed" unless genuine compliance was
+  checked. Ships a non-redistributable-document guard for the ASD standard itself.
+- **`operator-rewrite`** skill — the operational sibling of `stakeholder-rewrite`,
+  for the people who *run* the thing: user guide, quick reference, runbook/SOP, or
+  "what changes for you" note. Where the sibling strips detail, this one **protects**
+  it — extracting an operational spine first and gating on "did every rule survive?"
+  — and applies STE's procedural machinery in full. Reuses the sibling's ASD-STE100
+  references by path rather than duplicating them.
 - **Output styles as a second distributable asset class.** The repo now ships
   `.claude/output-styles/*.md` alongside `.claude/skills/`, with its own install
   path — Claude Code reads output styles only from `~/.claude/output-styles/` (or a
@@ -37,10 +59,29 @@ All notable changes to `claude-skills` are documented here. The format follows
   **self-contained HTML artifact** of hand-authored SVG **UML activity and sequence
   diagrams** (plus optional system-context and data-model panels). Accuracy-first
   (every node/lifeline/message traces to verified `file:line`) and CSP-safe
-  (inline SVG only — no Mermaid/PlantUML/CDN, which the Artifact runtime blocks).
+  and hand-authored (inline SVG only — Mermaid renders natively in artifacts but is
+  ruled out on layout control, and the CDN-based renderers are blocked by the CSP).
   Ships a `references/svg-uml-kit.md` drawing kit and an `assets/artifact-scaffold.html`
   theme-aware starter; defers to the `artifact-design` skill for visual calibration.
-- `README.md` **Included skills** row for `code-to-uml`.
+- **`show-me`** skill — explains the most recently posed question, position, or
+  statement as a self-contained visual artifact: a fixed subject-resolution order
+  (an unanswered gate → a stated position → pasted content → the user's own
+  question), the confusion type mapped to a diagram form, and hand-authored inline
+  SVG throughout. Its signature discipline is the **carry-back**: every fork the
+  artifact names is re-presented in the session via `AskUserQuestion` with matching
+  labels and meaning — no silently dropped options, and no manufactured decision
+  where the artifact presents none. Grounds repo-related claims in real code and
+  marks inferred nodes.
+- `README.md` **Included skills** rows for `code-to-uml` and `show-me`.
+
+### Changed
+
+- **`code-to-uml`** — corrected the stated reason Mermaid is excluded. The Artifact
+  runtime *does* render Mermaid natively, so the previous "the CSP blocks it, it
+  renders nothing" claim was wrong; the exclusion now rests on layout control
+  (auto-layout cannot express repo-coloured swimlanes, `inferred` nodes, exact
+  fragment placement, or token-driven theming). The CSP claim still stands for
+  PlantUML, kroki, and other CDN-based renderers.
 
 ## [1.0.0] — 2026-07-02
 
