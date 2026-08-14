@@ -4,6 +4,39 @@ All notable changes to `claude-skills` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **`explain-skill`** skill — explains one or more named skills or plugins as a
+  single **one-page artifact**: invocation badges (who may call it, where it was
+  found on disk), a when-to-use/when-not routing note, an options table built only
+  from forms the source file documents, an inline-SVG behaviour flow with the
+  **gates drawn distinctly** from automatic steps, and a worked example pair. Where
+  the explained skill's own output is an artifact, that output is **embedded as a
+  captioned facsimile** — scoped markup in a framed container, never a nested
+  document or an `iframe` the CSP would blank. Resolution is by disk lookup with
+  provenance recorded (project → personal → plugin cache → marketplace checkout);
+  a harness-supplied skill with no file is labelled as described-from-listing with
+  the unsubstantiated sections dropped. Accepts several targets; the header gains a
+  sticky anchor **navigation bar only at two or more**. User-invoked only
+  (`disable-model-invocation: true` plus a Step 0 subagent refusal), on the same
+  reasoning as `show-me`: the page publishes under the user's account and the
+  closing report is a conversation with them.
+- `README.md` **Included skills** row for `explain-skill`.
+
+### Changed
+
+- **`show-me`** — locked to user invocation. The skill sets
+  `disable-model-invocation: true`, so the harness admits only a typed
+  `/show-me`, and a **Step 0** refuses the run outright when it is reached from a
+  subagent (including via a dispatched one). The reason is structural rather than
+  stylistic: the skill's second half puts a decision to the user with
+  `AskUserQuestion`, which a subagent has no channel for, and "the last thing
+  posed" is only visible in the session where it was posed. The natural-language
+  triggers came out of the description accordingly — prose like "show me that" no
+  longer starts it.
+
 ## [1.1.0] — 2026-08-13
 
 Six new skills, plus **output styles** as a second distributable asset class with

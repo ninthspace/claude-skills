@@ -3,6 +3,10 @@
 # CPM session state (transient execution artifacts — never deliverables)
 docs/plans/.cpm-*
 
+# DPM planning database (binary; the dpm README instructs ignoring it — the
+# markdown projection and SQL dump are the committed representations)
+.dpm/dpm.db*
+
 # Machine-local Claude settings
 settings.local.json
 

@@ -1,10 +1,11 @@
 ---
 name: show-me
-description: Explain the most recently posed question, position, or statement in the conversation as a visual artifact — plain prose plus diagrams that make it easy to understand — then carry any outcomes, forks, or options the artifact presents back into the session as a choice for the user. Use when the user says "/show-me", "show me", "show me that", "explain that visually", "draw me a picture of that", "I don't follow — diagram it", "make that easier to understand", "walk me through what you just said", "visualise those options", or otherwise asks for the last thing said to be made comprehensible rather than restated. Also use when the user is stuck at a decision point and asks to see the options laid out. Do not use for producing UML from real code across repositories (that is code-to-uml), for rewriting a whole document for an audience (stakeholder-rewrite / operator-rewrite), or for building product mockups (brief-to-mockups).
+description: User-invoked only — run when the user types "/show-me", never on your own initiative and never from a subagent. Explains the most recently posed question, position, or statement in the conversation as a visual artifact — plain prose plus diagrams that make it easy to understand — then carries any outcomes, forks, or options the artifact presents back into the session as a choice for the user. Do not use for producing UML from real code across repositories (that is code-to-uml), for rewriting a whole document for an audience (stakeholder-rewrite / operator-rewrite), or for building product mockups (brief-to-mockups).
 license: MIT
+disable-model-invocation: true
 metadata:
   author: ninthspace
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Show Me
@@ -19,6 +20,14 @@ The point is comprehension, not decoration. The user asked for this because word
 2. **Carry back inward** — the options, outcomes, and next-step forks named *in that artifact* are re-presented in the session via `AskUserQuestion`, so understanding converts into a decision without the user re-typing anything.
 
 Half two is what distinguishes this skill. An artifact that ends in "so, which way?" and then leaves the user to answer in free text has done half the job.
+
+## Step 0 — main session only; refuse to run as a subagent
+
+**If you are a subagent, stop here.** Do not build the artifact. Return the subject you were given (and anything you have already found out about it) and let the main session run this skill.
+
+This is not ceremony. The skill's second half is a decision put to the user with `AskUserQuestion` — a subagent has no channel to the user, so a subagent run produces an artifact whose forks land nowhere, and the user gets a link with no way to answer it. The subject also *is* the conversation: "the last thing posed" is only visible in the session where it was posed, and a subagent has none of that context.
+
+The frontmatter carries `disable-model-invocation: true`, so the harness allows only a typed `/show-me`. Treat this step as the backstop for setups where that field isn't honoured, and don't route around it — no dispatching a subagent to build the artifact on your behalf. Reaching for this skill unprompted, whether directly or through an agent, is out of bounds even when a diagram would obviously help; suggest that the user run `/show-me` instead.
 
 ## Step 1 — Identify the subject, and say what it is
 
@@ -98,6 +107,7 @@ A timeout or an unanswered gate is **not** an answer and not approval. Leave the
 
 ## Guardrails
 
+- **The user invokes this, never you.** Typed `/show-me` only — not on your own initiative, not from a subagent, not by dispatching one.
 - **Comprehension is the deliverable.** If the artifact is not easier to understand than the sentence it replaced, it has failed — shorten the prose, not the diagram.
 - **Never invent a fact to make a picture tidy.** Verified names only; mark inferred nodes.
 - **Hand-authored inline SVG for every diagram.** No Mermaid, no PlantUML, no CDN renderer.
