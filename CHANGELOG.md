@@ -4,7 +4,13 @@ All notable changes to `claude-skills` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.2.0] — 2026-08-14
+
+Two new **user-invoked** skills — `research` (migrated in from a standalone
+notebook repo) and `explain-skill` — and `show-me` brought under the same
+invocation lock. The common thread is the boundary: all three need a live channel
+to the user, so all three now refuse to run from a subagent and take only a typed
+invocation.
 
 ### Added
 
@@ -53,7 +59,7 @@ All notable changes to `claude-skills` are documented here. The format follows
   (`disable-model-invocation: true` plus a Step 0 subagent refusal), on the same
   reasoning as `show-me`: the page publishes under the user's account and the
   closing report is a conversation with them.
-- `README.md` **Included skills** row for `explain-skill`.
+- `README.md` **Included skills** rows for `research` and `explain-skill`.
 
 ### Changed
 

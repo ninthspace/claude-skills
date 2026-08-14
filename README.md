@@ -2,7 +2,7 @@
 
 A collection of shared [Claude Code](https://code.claude.com) skills.
 
-**Version 1.1.0** — see [CHANGELOG.md](CHANGELOG.md) for what's in this release.
+**Version 1.2.0** — see [CHANGELOG.md](CHANGELOG.md) for what's in this release.
 
 Skills live under `.claude/skills/`, one folder per skill. Output styles live under
 `.claude/output-styles/`, one `.md` file per style — these install differently from
