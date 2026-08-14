@@ -8,6 +8,36 @@ All notable changes to `claude-skills` are documented here. The format follows
 
 ### Added
 
+- **`research`** skill — migrated in from a standalone research-notebook directory,
+  made portable, and locked to user invocation. Runs research sessions into a **notebook**: a directory of
+  dated `YYYY-MM-DD-subject-slug` sessions plus a generated `INDEX.md`, with four
+  modes (new session, continue, enquire read-only across the corpus, list). Ships
+  the three session templates (`README`/`findings`/`sources`) and a read-only
+  `scripts/index-rows.sh` that emits the index rows.
+  - **New Step 0 — resolve the notebook root**, the substantive change the move
+    required: the skill previously *was* the notebook repo and could assume the
+    working directory. It now resolves explicit path → `$RESEARCH_NOTEBOOK` → the
+    cwd if it looks like a notebook → a `research/` / `docs/research/` /
+    `.research/` folder in the current project → ask, states which root it picked,
+    and offers to make the choice durable. **Never invents a root**, so a dated
+    session directory cannot be scaffolded into an application repo that merely
+    happened to be the working directory.
+  - Paths throughout are relative to the resolved root rather than the cwd, and the
+    index script is invoked from the installed skill directory with the root passed
+    as an argument (it already accepted one).
+  - `scripts/index-rows.sh` — loop rewritten over a `nullglob` array instead of
+    parsing `ls`, with an explicit not-a-directory error and exit 1; output verified
+    byte-identical to the original against a real two-session notebook, plus the
+    empty-notebook and bad-path cases.
+  - **User-invoked only** — `disable-model-invocation: true` plus a Step 0 subagent
+    refusal, so it takes a typed `/research` and prose like "look into X" no longer
+    starts a session. The guard is deliberately narrow: it blocks a subagent from
+    *owning* a session (choosing the mode, creating the directory, writing the session
+    files or the index), because those are the points where the user has to be asked
+    about an overlapping subject or an unresolvable root. Dispatching `Explore` agents
+    for breadth *inside* an invoked session stays encouraged.
+  - De-personalised (the source named its author throughout), and the "don't touch
+    git" rule now also notes a notebook need not be a repository at all.
 - **`explain-skill`** skill — explains one or more named skills or plugins as a
   single **one-page artifact**: invocation badges (who may call it, where it was
   found on disk), a when-to-use/when-not routing note, an options table built only
