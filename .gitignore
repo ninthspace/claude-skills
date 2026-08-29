@@ -12,3 +12,7 @@ settings.local.json
 
 # IDE
 .idea/
+
+# Python bytecode from running skill scripts locally
+__pycache__/
+*.pyc

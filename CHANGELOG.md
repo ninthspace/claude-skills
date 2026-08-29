@@ -4,6 +4,45 @@ All notable changes to `claude-skills` are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **`prune-comments`** skill — sweeps first-party source from the working directory
+  down for comment blocks of four lines or more and cuts each to three lines or
+  fewer, or deletes it outright where it only restates the code. Also removes
+  notices addressed to coding agents or harnesses and leftover session residue
+  ("as requested", "Step 2 of 5", first-person narration of an edit), extracting any
+  real constraint they were wrapped around rather than deleting blind.
+  - Ships `scripts/find_comments.py`, a heuristic multi-language scanner (PHP,
+    Blade, JS/TS, Vue, Svelte, CSS/SCSS, Python, Ruby, Go, Rust, Java, C-family,
+    shell, YAML, SQL, HTML). Uses `git ls-files` where available so `.gitignore` is
+    honoured, and hard-skips `vendor/`, `node_modules/`, build output, minified and
+    generated files regardless. Deliberately conservative — a line counts as a
+    comment only when the marker starts the line — and flags blocks as
+    `agent` / `scaffold` / `commented-code` / `preserve` as triage hints.
+  - **Two modes.** *Review* (default) reports every block with its proposed
+    replacement and applies in approved batches. *Sweep* — "just do it", "skip the
+    report", "sweep it" — drops the gate and works straight through, leaving the
+    comments-only diff as the review surface. Sweep removes the gate, not the
+    judgement: the never-touch list, the per-block decision against the code, the
+    "leave the ambiguous ones alone" rule and the full Step 6 verification all still
+    apply, and the closing report carries the per-block detail the up-front one
+    would have. Nothing is committed in either mode.
+  - **Two enforced outcomes**: every rewritten block ends strictly shorter than it
+    started, and the diff contains comment lines only — verified with `git diff -U0`
+    plus a rescan before the run is reported complete.
+  - **Never touched**: licence and SPDX headers, tool directives (`eslint-disable`,
+    `phpcs:`, `# noqa`, `@ts-expect-error`, …), genuine `@generated` banners,
+    docblock tags carrying type or contract information, and framework scaffold
+    comments in `config/` and `bootstrap/` — the last of these because rewriting
+    upstream text makes every framework upgrade diff against your edits. Offered as
+    a separate opt-in batch instead.
+  - `references/comment-judgement.md` carries ten worked before/after cases,
+    including three blocks correctly *left alone*: a docblock whose array-shape tags
+    PHPStan reads, six lines of genuinely load-bearing complexity, and a vague
+    warning with no recoverable fact.
+
 ## [1.2.0] — 2026-08-14
 
 Two new **user-invoked** skills — `research` (migrated in from a standalone
