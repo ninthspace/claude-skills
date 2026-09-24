@@ -42,7 +42,7 @@ are judgement-heavy and a focused diff is reviewable; an app-wide sweep is not.
 Refactoring without a green test suite is how you ship silent behaviour changes.
 
 - Run the relevant tests first and confirm green: `php artisan test --filter=...` or
-  `./vendor/bin/pest path/to/tests` (this project uses Pest). Record the baseline.
+  `./vendor/bin/pest path/to/tests` if the project uses Pest. Record the baseline.
 - If the scoped code has thin or no coverage, say so plainly and recommend writing
   characterization tests for the call sites first, or proceed only with the user's
   explicit OK. Note the risk in the final summary either way.
@@ -106,7 +106,8 @@ One concept at a time. For each concept:
 4. Run the tests. Green before starting the next concept.
 
 Keep each concept's change a self-contained, reviewable diff. Preserve nullability,
-default values, and validation semantics exactly (step 4 of the reference). Use named
+default values, and validation semantics exactly (validation: *Preserving validation*
+in `references/dto-patterns.md`). Use named
 arguments at construction sites so the mapping stays obvious in review.
 
 ### 6. Verify and summarize
@@ -120,13 +121,14 @@ arguments at construction sites so the mapping stays obvious in review.
 ### 7. Hand off to laravel-simplifier
 
 Once — and only once — the refactor is complete and the scoped tests are green, hand
-off to the **`laravel-simplifier`** skill for a follow-up simplification pass over the
+off to **`laravel-simplifier`** for a follow-up simplification pass over the
 **same scope**. Introducing DTOs tends to leave new simplification opportunities in its
 wake (call sites that unpacked-then-repacked the same primitives, now-redundant local
 variables, mapping code the DTO's factory methods have absorbed), and that pass is
 laravel-simplifier's job, not this skill's.
 
-Trigger it by consulting the `laravel-simplifier` skill and running it against the
+Run `laravel-simplifier` (a skill, or the Laravel plugin's `laravel:laravel-simplifier`
+agent) against the
 files you just touched. Do **not** hand off if the work was abandoned, left red, or
 only partially applied — finish or revert first, because simplifying on top of a broken
 refactor compounds the problem. Mention the handoff in the step-6 summary so the user

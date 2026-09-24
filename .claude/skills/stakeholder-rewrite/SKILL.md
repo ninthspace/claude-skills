@@ -52,7 +52,7 @@ Common audiences and what changes:
 
 Work through `references/ste-rules.md`. The operative core, in order of how much they matter here:
 
-1. **One idea per sentence.** Procedural sentences stay under 20 words; descriptive sentences under 25. Paragraphs stay under about six sentences.
+1. **One idea per sentence.** Keep sentences short: 20 words procedural and 25 descriptive are the commonly cited STE limits — check `references/ste-rules.md` and the official copy before quoting them. Paragraphs stay under about six sentences.
 2. **Active voice, named actor.** "The system was reviewed" hides who. Write "We reviewed the system" or name the team.
 3. **One word, one meaning.** Pick a term for each concept and never vary it. Elegant variation is the enemy — if you call it "the platform" once and "the system" later, the reader assumes two things exist.
 4. **No unexplained jargon or acronyms.** First use gets a plain gloss. If a term cannot be glossed in a clause, it belongs in the glossary, not the sentence.

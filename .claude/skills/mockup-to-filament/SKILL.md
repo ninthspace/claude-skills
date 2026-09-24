@@ -1,6 +1,6 @@
 ---
 name: mockup-to-filament
-description: "Convention: `…-mockup(s)` produces a mockup; `mockup-to-…` consumes a mockup, builds the named target. Siblings: `brief-to-mockups` and `filament-mockup` produce mockups; `mockup-to-blade` is the bespoke build lane. Use this skill when turning an HTML mockup into a production Filament admin/CRUD UI and you want fidelity to the mockup's design without hand-copying its markup. Trigger when converting a mockup/showcase for an admin panel, back-office, resource/CRUD screen or dashboard into Filament resources, pages and a Filament theme; when a delivered .html mockup targets a Filament surface; when asked to 'build the admin to match the mockup' on Filament. Covers: classifying screens to native Filament constructs before any extraction, scaffolding resources/pages per FR→screen (live filters = native filtersForm), theming once + resolving parity deltas inside the theme story, mounting bespoke Livewire inside Filament chrome for mk-custom surfaces, a coverage gate that reads the mk-*/fi-* tag vocabulary, and the Filament correction seams. Fidelity here = a shared THEME, not shared markup: the mockup Blade is throwaway and Filament regenerates the markup; fi-* components are configured/themed, never hand-extracted. Do not use for bespoke Blade/Livewire surfaces (those go to mockup-to-blade), for greenfield UI with no mockup, or for non-Laravel stacks."
+description: "Convention: `…-mockup(s)` produces a mockup; `mockup-to-…` consumes a mockup, builds the named target. Siblings: `brief-to-mockups` and `filament-mockup` produce mockups; `mockup-to-blade` is the bespoke build lane. Use this skill when turning an HTML mockup into a production Filament admin/CRUD UI and you want fidelity to the mockup's design without hand-copying its markup. Trigger when converting a mockup/showcase for an admin panel, back-office, resource/CRUD screen or dashboard into Filament resources, pages and a Filament theme; when a delivered .html mockup targets a Filament surface; when asked to 'build the admin to match the mockup' on Filament. Fidelity here = a shared THEME, not shared markup: the mockup Blade is throwaway and Filament regenerates the markup; fi-* components are configured/themed, never hand-extracted. Do not use for bespoke Blade/Livewire surfaces (those go to mockup-to-blade), for greenfield UI with no mockup, or for non-Laravel stacks."
 license: MIT
 metadata:
   author: ninthspace
@@ -30,7 +30,7 @@ The mockup is still the **visual** authority (the theme must match it) and still
 
 Run the **theme + parity-delta + custom-component substrate as a Phase 0**, before any feature epic is decomposed. Establish the Filament theme (Step 3), resolve the parity deltas against `fi-*` once, and stand up the `mk-custom` Livewire surfaces (Step 4) up front — then feature epics build resources/pages against a *themed, parity-resolved* panel they simply consume.
 
-The expensive alternative — the one to avoid — is theming and resolving parity **reactively, page by page** as feature epics land. That is the drift tail that a late foundation produces: each feature page re-discovers the same theme gaps, and parity is chased instead of owned. (In one prior build, the theme/parity work was effectively this Phase 0 done late.) Do the theme and parity once, first.
+The expensive alternative — the one to avoid — is theming and resolving parity **reactively, page by page** as feature epics land. That is the drift tail that a late foundation produces: each feature page re-discovers the same theme gaps, and parity is chased instead of owned. Do the theme and parity once, first.
 
 ## The step backbone (embedded — this is the source of truth for execution)
 
@@ -107,4 +107,4 @@ Before calling a surface done, walk the Filament-specific seams:
 
 ## The bundled companion
 
-`references/mockup-to-filament-fidelity.md` (bundled in this skill directory) is the long-form version — the same method with the *why* spelled out and worked Filament examples. <!-- Seeded in Story 3 (Task 3.1). -->
+`references/mockup-to-filament-fidelity.md` (bundled in this skill directory) is the long-form version — the same method with the *why* spelled out and worked Filament examples.

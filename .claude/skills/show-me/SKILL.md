@@ -69,7 +69,7 @@ One diagram doing one job beats a single crowded picture. Two or three small dia
 
 **Load `artifact-design` before writing any HTML**, and `artifact-diagramming` for the diagram mechanics — including the inline-SVG technique and both-theme legibility.
 
-**Hand-authored inline SVG only — no Mermaid.** Artifacts do render Mermaid natively, but this skill doesn't use it, matching [`code-to-uml`](../code-to-uml/SKILL.md). Mermaid's auto-layout decides what the picture emphasises, and emphasis is the entire job here; hand-authored SVG gives control over spacing, hierarchy, and both themes, and never surprises you with a re-flow. Every other renderer (PlantUML, kroki, anything pulling JS from a CDN) is blocked outright by the artifact CSP and renders nothing. For charts, follow `dataviz` and draw them as inline SVG too.
+**Hand-authored inline SVG only — no Mermaid.** Artifacts do render Mermaid natively, but this skill doesn't use it, matching [`code-to-uml`](../code-to-uml/SKILL.md). Mermaid's auto-layout decides what the picture emphasises, and emphasis is the entire job here; hand-authored SVG gives control over spacing, hierarchy, and both themes, and never surprises you with a re-flow. Remote renderers (PlantUML, kroki) sit outside the artifact runtime's allowlist and are not used either. For charts, follow `dataviz` and draw them as inline SVG too.
 
 ## Step 4 — Write the artifact
 
@@ -82,7 +82,7 @@ Structure it so a reader who skims the headings still gets the answer:
 - **What happens next** — the outcomes and forks, stated explicitly. This section is the source for Step 5, so it must be complete and unambiguous.
 - **What this doesn't cover** — one honest line, where it applies.
 
-Keep it proportionate. Explaining one decision fork is a compact page, not a report. Publish with a stable short noun-phrase `<title>`, a favicon, and a one-sentence `description`. Re-publishing an edit to the same file path redeploys to the same URL — reuse it rather than minting a second link.
+Keep it proportionate. Explaining one decision fork is a compact page, not a report. Publish with a stable short noun-phrase `<title>`, a one-word `icon` on first publish, and a one-sentence `description`. Re-publishing an edit to the same file path redeploys to the same URL — reuse it rather than minting a second link.
 
 ## Step 5 — Carry the forks back into the session
 

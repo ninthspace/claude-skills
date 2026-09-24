@@ -42,7 +42,9 @@ A framework or IdP owning the *mechanism* says **nothing** about who builds the 
 
 ---
 
-## Step 1 — Decompose the mockup into real Blade views at real routes  *(entry step)*
+## Step 1 — Decompose the mockup into real Blade views at real routes
+
+*Run SKILL.md's Step 0 substrate guard first; this playbook assumes the surface is confirmed bespoke.*
 
 This is the move that gets the mockup *into the codebase* so every later step has something real to work on. A delivered mockup is usually a **single HTML showcase holding many screens** behind a client-side switcher. You have to take it apart correctly before you can build.
 

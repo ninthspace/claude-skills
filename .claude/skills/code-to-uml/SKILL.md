@@ -20,7 +20,7 @@ The diagrams are drawn from the **actual code**, not a plausible-looking guess. 
 **2. Self-contained SVG — never Mermaid.** Hand-author inline SVG for every diagram. Two separate reasons, and it matters which is which:
 
 - **Mermaid is available and still not used here.** The Artifact runtime renders Mermaid natively (```mermaid fences, or `<pre class="mermaid">` blocks) — no CDN involved. It is ruled out on *control*: its auto-layout decides participant order, spacing, and what the eye lands on, and it has no way to express the things these diagrams depend on — a swimlane coloured by owning repo, an `inferred` node marked as such, a nested fragment placed exactly where the branch sits, or a token-driven palette that survives both themes. A diagram whose layout can re-flow under you is the wrong substrate for an auditable claim about code.
-- **Everything else is genuinely blocked.** The runtime enforces a strict Content-Security-Policy: no external scripts, no CDN requests, no remote fonts. PlantUML, kroki, and every other renderer that fetches JS from a CDN is therefore **unavailable** — it renders nothing, silently.
+- **Remote renderers are ruled out too.** PlantUML, kroki and similar services render on a remote server outside the Artifact runtime's allowlist, and would give up the same layout control that rules out Mermaid.
 
 Hand-authored SVG gives full control over layout, theming, and legibility, and it always works.
 
@@ -65,7 +65,7 @@ Record uncertainty honestly — if a branch's behaviour isn't clear from the cod
 
 These artifacts are **technical documents**, not landing pages — aim for utilitarian-polished, a "drawing-sheet" aesthetic:
 
-- A **monospace-forward** type treatment fits the subject's vernacular (class names, routes, node labels in mono; running prose in a humanist sans) and sidesteps the generic AI look.
+- A **monospace-forward** type treatment fits the subject's vernacular (class names, routes, node labels in mono; running prose in a humanist sans). Avoid the other stock treatments: a cream page background, italic accent words in headings, numbered "01/02/03" section labels, pill-shaped buttons.
 - Use **hue to encode system ownership** — one accent per repo / swimlane. That is information design, not decoration, so two accents here is legitimate. Keep **semantic** colours (warn / reject / ok) as a separate, third channel.
 - Choose a neutral with a slight bias toward the accent; design both themes through tokens.
 
@@ -85,14 +85,14 @@ Rules that keep the result legible and correct:
 
 ## Step 5 — Publish and confirm
 
-Publish the self-contained HTML with the Artifact tool. Give it a stable, descriptive `<title>` and a favicon, and a one-sentence `description` (the Artifact tool's gallery subtitle — say what the diagram set covers, e.g. "UML activity + sequence diagrams of the checkout order lifecycle"). Keep the title and favicon stable across redeploys of the same artifact; editing the file and re-publishing to the same path redeploys to the same URL.
+Publish the self-contained HTML with the Artifact tool. Give it a stable, descriptive `<title>`, a one-word `icon` on first publish, and a one-sentence `description` (the Artifact tool's gallery subtitle — say what the diagram set covers, e.g. "UML activity + sequence diagrams of the checkout order lifecycle"). Keep the title stable across redeploys of the same artifact; editing the file and re-publishing to the same path redeploys to the same URL.
 
 After publishing, surface the **modelling judgement calls** you made — a band split, a collapsed branch, an inferred path, a diagram you chose not to draw — and offer to adjust. The reader knows the domain; you know the code; the good version is the intersection.
 
 ## Guardrails
 
 - **Accuracy over completeness.** Verified real names only. Mark inferred nodes. Never invent flow to fill a diagram.
-- **No Mermaid / PlantUML / kroki / CDN anything.** Inline, hand-authored SVG only. Mermaid renders natively but is ruled out on layout control; the CDN-based renderers are blocked by the CSP and fail silently.
+- **No Mermaid / PlantUML / kroki / remote renderers.** Inline, hand-authored SVG only. Mermaid renders natively but is ruled out on layout control; remote renderers sit outside the Artifact runtime's allowlist.
 - **Match the diagram set to the prompt.** Don't ship a sequence diagram for a pure control-flow ask, or an activity diagram when the question is really "who calls whom, in what order".
 - **Multi-repo: name the seam.** State what crosses each boundary and whether it is sync or async; colour lanes by owning system.
 - **Legibility beats density.** Split diagrams, scroll wide ones, theme both modes, don't overcrowd a lane.

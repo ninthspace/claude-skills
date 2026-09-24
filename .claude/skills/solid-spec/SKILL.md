@@ -41,13 +41,7 @@ After detection, present scope to the user via `AskUserQuestion` if it wasn't pr
 
 Before starting the sweep, check what tooling is available — none of these are required, but each one tightens the sweep when present.
 
-- **`mcp__laravel-boost__*`** — if the project has Laravel Boost installed, prefer its tools over manual alternatives. The most useful for this skill are:
-  - `application-info` — confirms Laravel/PHP version + installed packages, so recommendations don't propose features unavailable in the version actually in use.
-  - `database-schema` — read the real columns before recommending `$fillable` narrowing, cast changes, scope rewrites, or value-object extractions.
-  - `database-query` — read-only queries to sanity-check assumptions (e.g. "is this nullable column ever actually null in production-shaped data?").
-  - `search-docs` — version-pinned Laravel docs lookup. Use it before drafting an Architecture Decision that references a Laravel pattern (observers, action classes, scopes, casts, form request authorisation, container binding) so the rationale and phrasing match the docs the project's version ships with.
-  - `last-error` / `read-log-entries` / `browser-logs` — useful when the SOLID violation is being motivated by an active bug; the error often points straight at the smell (god-class stack traces, swallowed exceptions, etc.).
-  - `tinker` — for quickly probing call sites or model state during the sweep when grep alone is ambiguous. Read-only intent; never use it to mutate data.
+- **`mcp__laravel-boost__*`** — if Laravel Boost is installed, prefer its tools over manual alternatives for: confirming Laravel/PHP and package versions, so recommendations fit the installed version; reading the real database schema before recommending `$fillable`, cast, scope or value-object changes; read-only queries to test assumptions; version-pinned docs search before drafting an Architecture Decision that cites a Laravel pattern; recent errors and logs when an active bug motivates the refactor; and read-only probing when grep is ambiguous — never to mutate data.
 - **`larastan` / `phpstan`** (via project config) — if the project runs static analysis, scan its baseline output for "ignored" files. Files in the baseline are often god classes the project gave up on; they're high-yield sweep targets.
 - **`pint --test`** — reveals consistency drift (formatting, idiomatic patterns) which often correlates with SRP violations. Don't run `pint` itself during the sweep (it mutates), but the baseline of "files Pint would change" is informative.
 - **`composer show -i`** + **`php artisan about`** — when boost isn't installed, these are the manual fallbacks for stack/version detection.

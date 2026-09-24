@@ -22,16 +22,16 @@ This skill **must** invoke the `frontend-design` skill to do the visual-directio
 
 ## Where this sits in the lifecycle (run before spec → epics)
 
-The mockup is built **before** the spec is decomposed, because the mockup is what wins the room and then *feeds* the spec. Building production code here would front-run the spec. The pipeline is: **brief → mockups (this skill) → spec → epics → build (via `mockup-to-blade`)**. The showcase + style guide this skill emits are the exact input contract that `mockup-to-blade` consumes downstream — keep them clean.
+The mockup is built **before** the spec is decomposed, because the mockup is what wins the room and then *feeds* the spec. Building production code here would front-run the spec. The pipeline is: **brief → mockups (this skill) → spec → epics → build (via `mockup-to-blade` for bespoke surfaces, `mockup-to-filament` for Filament-bound ones)**. The showcase + style guide this skill emits are the exact input contract that `mockup-to-blade` consumes downstream — keep them clean.
 
 ## Two roadmaps: route by realisation target
 
 A single brief often splits across surfaces that will be **built in different substrates**. Mock each surface in the substrate it will be realised in — a Filament admin panel mocked as bespoke HTML throws away fidelity and re-does work `filament-mockup` already does better, and vice versa. So before any design, partition the brief's surfaces by target (Phase 0) and send each partition down its roadmap:
 
 - **Bespoke / branded surfaces** (customer-facing, public, marketing, anything with its own visual identity) → **continue in this skill** (Phases 1–6): generate/extract a style guide via `frontend-design`, build the branded HTML showcase.
-- **Filament-bound surfaces** (admin panels, internal CRUD, administrator back-office) → **hand off to the `filament-mockup` skill**. Do *not* build a branded style guide or run `frontend-design` for these — `filament-mockup` mocks to Filament v5's own grammar and captures the real theme. This skill's job for that partition ends at the routing table.
+- **Filament-bound surfaces** (admin panels, internal CRUD, administrator back-office) → **hand off to the `filament-mockup` skill**. Do *not* build a branded style guide or run `frontend-design` for these — `filament-mockup` mocks to Filament's own grammar and captures the real theme. This skill's job for that partition ends at the routing table.
 
-A user registration system is the worked example: the customer registration journey went the bespoke roadmap; the administrator queue/panel went the Filament roadmap. Both are legitimate outputs of one brief.
+Example: in a user registration system, the customer registration journey is bespoke and the administrator queue/panel is Filament-bound — both partitions come from one brief.
 
 > If the **entire** brief is a Filament panel, skip this skill and invoke `filament-mockup` directly. Use `brief-to-mockups` as the entry point when the brief is bespoke-only or **mixed**.
 
@@ -56,9 +56,9 @@ Hard preconditions. Confirm each holds before doing a phase's work; if not, go b
 - **G5 — The nav switcher is throwaway harness.** The `.mockup-nav`, `showScreen()`, and `.screen.active` toggle are presentation scaffolding and must be labelled as such. `mockup-to-blade` discards them; production navigation is real routes/forms/state.
 - **G6 — Coverage gate before sign-off.** Phase 4 runs before you hand anything off, not at the very end as an afterthought. Every FR mapped to ≥1 element; every element traced back. Unmapped FRs and unbacked elements are both defects.
 
-### Dry-run self-check (emit before executing)
+### Phase order
 
-Emit the plan as an ordered list and confirm it reads exactly:
+The phases run in this order; G0–G6 state which reorderings are defects:
 
 ```
 0.  Intake: read brief → extract FRs + journey → probe brand reference → route surfaces by target (Filament-bound → filament-mockup; bespoke → continue here) → write the durable routing artifact `docs/mockups/surface-routing.md` (`surface · FRs · substrate · producer · builder`) (G0)
@@ -69,8 +69,6 @@ Emit the plan as an ordered list and confirm it reads exactly:
 5.  Self-critique per frontend-design (anti-default, signature earns its boldness, quality floor)
 6.  Handoff: position showcase + style guide for spec sign-off; write the managed pipeline block into the project CLAUDE.md so /cpm:epics front-loads the build foundation (`mockup-to-blade` for bespoke, `mockup-to-filament` for Filament)
 ```
-
-If the emitted order differs — or Phase 3 appears before Phase 1, or `frontend-design` is skipped in the extract branch, or a screen has no FR backing, or a Filament-bound surface is about to get a branded style guide — stop and correct before doing any work.
 
 ## The phase backbone (source of truth for execution)
 
@@ -195,5 +193,5 @@ Write (or update) a **managed, marker-delimited block** in the project's root `C
 
 ## Relationship to the sibling skills
 
-- **`filament-mockup`** — the framework-specific variant and this skill's **routing target** for Filament-bound surfaces: same brief→mockup direction, but mocks to Filament v5's grammar and captures a real theme instead of building a brand style guide. Phase 0 hands it the Filament partition; for a wholly-Filament brief, invoke it directly and skip this skill.
+- **`filament-mockup`** — the framework-specific variant and this skill's **routing target** for Filament-bound surfaces: same brief→mockup direction, but mocks to Filament's grammar and captures a real theme instead of building a brand style guide. Phase 0 hands it the Filament partition; for a wholly-Filament brief, invoke it directly and skip this skill.
 - **`mockup-to-blade`** — the reverse direction: consumes this skill's **bespoke** showcase and turns it into production Blade/Livewire UI by construction. This skill's `data-fr` tags and clean token/harness separation are what make that decomposition cheap. (Its Filament counterpart is **`mockup-to-filament`**, which consumes `filament-mockup`'s output.)

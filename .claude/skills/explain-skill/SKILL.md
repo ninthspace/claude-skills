@@ -31,7 +31,7 @@ Search in this order and stop at the first hit, noting **where** it was found �
 | --- | --- |
 | Project skill | `.claude/skills/<name>/SKILL.md` |
 | Personal skill | `~/.claude/skills/<name>/SKILL.md` (often a symlink — follow it to the real repo) |
-| Plugin skill (`plugin:skill`) | `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>/skills/<name>/SKILL.md` |
+| Plugin skill (`plugin:skill`) | `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>/skills/<name>/SKILL.md` — the cache can hold several versions; use the `installPath` recorded in `~/.claude/plugins/installed_plugins.json` |
 | Plugin (whole) | that plugin's `.claude-plugin/plugin.json`, plus its `skills/`, `commands/`, `agents/`, `hooks/hooks.json` |
 | Slash command | `.claude/commands/<name>.md`, `~/.claude/commands/<name>.md`, or a plugin's `commands/` |
 | Marketplace checkout | `~/.claude/plugins/marketplaces/<marketplace>/` when the cache copy is thin |
@@ -92,7 +92,7 @@ Keep the whole thing proportionate to what was asked. Three skills is a compact 
 
 ## Step 5 — Publish and confirm
 
-Publish with the `Artifact` tool: a stable short noun-phrase `<title>` naming the target(s), a favicon held stable across redeploys, and a one-sentence `description`. Re-publishing an edit to the same file path redeploys to the same URL.
+Publish with the `Artifact` tool: a stable short noun-phrase `<title>` naming the target(s), a one-word `icon` on first publish, and a one-sentence `description`. Re-publishing an edit to the same file path redeploys to the same URL.
 
 Then, in the conversation and briefly, report the things a reader of the page cannot check for themselves:
 

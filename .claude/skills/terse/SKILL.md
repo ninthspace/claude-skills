@@ -44,5 +44,5 @@ The invocation may carry an argument:
 
 - The change is picked up on the next turn; if the user doesn't see it apply immediately, they can confirm with `/output-style`.
 - Only ever touch the `outputStyle` key. Never edit `permissions`, `env`, hooks, or any other setting from this skill.
-- `"default"` is the correct value for "off" — it is Claude Code's built-in explanatory style. Do not delete the key or invent other style names.
+- `"default"` (Claude Code's built-in standard style) is the correct value for "off". Do not delete the key or invent other style names.
 - If setting Terse reports that the style is unknown, the output style has not been installed. `claude --add-dir` does **not** load output styles — run the repo's `./install.sh`, or symlink `.claude/output-styles/terse.md` into `~/.claude/output-styles/` by hand.

@@ -36,23 +36,23 @@ Flowing paragraphs are left alone — that is the point of "targeted".
 
 ## Enforcement
 
-A `PostToolUse` hook on `Write|Edit` runs the formatter against any `.md` file whose path contains `/docs/`. The hook is deterministic and idempotent, so Claude does not need to remember the rule — but when composing a markdown file inside a `docs/` tree, author it with the rule in mind so the post-write diff is minimal.
+An optional `PostToolUse` hook on `Write|Edit` (opt-in: registered in `settings.json` as described in `README.md`) runs the formatter against any `.md` file whose path contains `/docs/`. Do not assume it is active — author to the rules above, or run the formatter yourself after writing.
 
 For `.md` files outside `docs/` (e.g. `CLAUDE.md`, plugin `SKILL.md`, root `README.md`), the hook does **not** fire. Apply the rule manually if the output will be rendered as HTML.
 
 ## Formatter
 
-`~/.claude/skills/markdown/scripts/hard_breaks.py`
+`scripts/hard_breaks.py` (in this skill's folder)
 
 Usage:
 
-- Stdin → stdout: `cat file.md | python3 hard_breaks.py`
-- In place: `python3 hard_breaks.py path/to/file.md` (rewrites file)
+- Stdin → stdout: `cat file.md | python3 scripts/hard_breaks.py`
+- In place: `python3 scripts/hard_breaks.py path/to/file.md` (rewrites file)
 
 The script is idempotent: a second run produces byte-identical output. Safe to invoke defensively.
 
 ## Hook
 
-`~/.claude/skills/markdown/scripts/hook.py`
+`scripts/hook.py` (in this skill's folder)
 
 Entrypoint for Claude Code's `PostToolUse` event. Reads event JSON on stdin, filters for `Write|Edit` of `.md` paths containing `/docs/`, runs the formatter on the file in place, and always exits 0 (never blocks Claude).
