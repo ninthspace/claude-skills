@@ -8,6 +8,28 @@ All notable changes to `claude-skills` are documented here. The format follows
 
 ### Added
 
+- **`cloud-environments`** skill — creates, checks and removes Laravel Cloud environments
+  (on-demand previews, staging, production) from a manifest kept in the repository. Works for
+  any repository and organisation; no file in the skill names one.
+  - `validate` checks the manifest, refusing variables Cloud injects or manages
+    (`references/injected-keys.json`). `plan` reads Cloud without writing and writes an ordered,
+    hashed plan to the git-ignored `.cloud/plans/`, acting only on the manifest's own
+    application and the clusters and secret IDs it names; variable values are stored as
+    digests. `render` draws plans as one self-contained HTML page for approval, with
+    organisation-level secrets as a separate band and a dated cost estimate.
+  - `apply` runs a plan only with its approved hash, refuses delete steps and any secret the
+    manifest does not allow for the kind, re-reads Cloud first, and stops at the first failed
+    step. `verify` compares a built environment with the manifest. `remove` and `preview down`
+    delete one owned environment (and its unshared schema) after a named confirmation.
+    `secrets`, run in the user's own terminal, prompts for each secret's value with echo off,
+    creates it tagged by application, key and class, and writes its ID into the manifest;
+    `secrets status` reports each as present, missing, duplicated or unknown. No command
+    reads a secret's value back.
+  - Ships PHP 8.5 scripts with no dependencies, a stub `cloud` binary (fixture and stateful
+    modes) and a suite, `scripts/run-tests.sh`, that refuses to run against anything but the
+    stub; `scripts/check-help.php` compares every emitted command and option with the real
+    CLI's help, and `scripts/agnostic-scan.sh` checks the skill for organisation-specific terms.
+
 - **`prune-comments`** skill — reviews every comment in first-party source from the
   working directory down, including one-liners, trailing comments and docblocks, and
   keeps a comment only when it describes the code as it is now and tells a reader

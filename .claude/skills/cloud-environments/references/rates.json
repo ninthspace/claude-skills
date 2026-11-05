@@ -1,0 +1,22 @@
+{
+  "date": "2026-09-11",
+  "source": "Laravel Cloud pricing page, EU West (London) compute table; other lines derived from US East worked examples with the +16.7% London uplift, which is an assumption, not a published rate",
+  "region": "eu-west-2",
+  "note": "Monthly figures are the always-on cap (672 hours). The plan fee and any usage credit are not included, and an environment that sleeps costs less.",
+  "lines": {
+    "instance": {
+      "flex-512mb": {"monthly_cents": 700, "estimate": false},
+      "flex-1gb": {"monthly_cents": 1400, "estimate": false},
+      "flex-2gb": {"monthly_cents": 2800, "estimate": false},
+      "pro.m-1vcpu-4gb": {"monthly_cents": 3400, "estimate": false},
+      "pro.m-2vcpu-8gb": {"monthly_cents": 6800, "estimate": false}
+    },
+    "queue_worker": {
+      "mq.flex.256mb": {"monthly_cents": 430, "estimate": true},
+      "mq.flex.512mb": {"monthly_cents": 860, "estimate": true}
+    },
+    "database": {
+      "laravel_mysql": {"monthly_cents": 2568, "estimate": true}
+    }
+  }
+}

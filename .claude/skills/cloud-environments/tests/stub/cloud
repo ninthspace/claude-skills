@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+
+// Stand-in for the `cloud` CLI. Records every call to $CLOUD_STUB_LOG (one JSON line each,
+// with `write` true for a command that changes Cloud) and answers from the fixture
+// directory $CLOUD_STUB_FIXTURES: `{command}@{first argument}.json`, else `{command}.json`.
+// A `{command}.exit` file holds an exit code to fail with, its message in `{command}.stderr`.
+
+$argvList = array_slice($argv, 1);
+$command = $argvList[0] ?? '';
+$log = getenv('CLOUD_STUB_LOG');
+
+if ($log !== false && $log !== '') {
+    $writes = preg_match('/:(create|update|delete|attach|detach|run|variables|set-default|pause|resume|purge|retry-failed-job|delete-failed-job)$/', $command) === 1
+        || in_array($command, ['deploy', 'ship'], true);
+    file_put_contents($log, json_encode(['argv' => $argvList, 'write' => $writes])."\n", FILE_APPEND | LOCK_EX);
+}
+
+if (($world = getenv('CLOUD_STUB_WORLD')) !== false && $world !== '') {
+    require __DIR__.'/../state.php';
+    require __DIR__.'/world.php';
+    world($world, $argvList);
+}
+
+$positional = array_values(array_filter(array_slice($argvList, 1), fn ($a) => ! str_starts_with($a, '-')));
+$dir = getenv('CLOUD_STUB_FIXTURES');
+$dir = $dir === false ? '' : $dir;
+
+if ($dir !== '' && is_file("{$dir}/{$command}.exit")) {
+    fwrite(STDERR, is_file("{$dir}/{$command}.stderr") ? (string) file_get_contents("{$dir}/{$command}.stderr") : "stub: {$command} failed\n");
+    exit((int) file_get_contents("{$dir}/{$command}.exit"));
+}
+
+foreach (isset($positional[0]) ? ["{$dir}/{$command}@{$positional[0]}.json", "{$dir}/{$command}.json"] : ["{$dir}/{$command}.json"] as $file) {
+    if ($dir !== '' && is_file($file)) {
+        echo file_get_contents($file);
+        exit(0);
+    }
+}
+
+fwrite(STDERR, "stub: no fixture for {$command}\n");
+exit(1);

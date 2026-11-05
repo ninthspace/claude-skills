@@ -1,0 +1,16 @@
+{
+  "exact": [
+    "APP_KEY",
+    "APP_URL",
+    "QUEUE_CONNECTION",
+    "DB_CONNECTION",
+    "DB_HOST",
+    "DB_PORT",
+    "DB_DATABASE",
+    "DB_USERNAME",
+    "DB_PASSWORD",
+    "FILESYSTEM_DISK",
+    "LOG_CHANNEL"
+  ],
+  "prefixes": ["AWS_"]
+}

@@ -1,0 +1,42 @@
+{
+  "organisation": "example-org",
+  "application": "example-app",
+  "repository": "example-owner/example-app",
+  "region": "eu-west-2",
+  "php": { "version": "8.5", "extensions": ["intl"] },
+  "build_command": "composer install --no-dev --optimize-autoloader && npm ci && npm run build",
+  "deploy_command": "php artisan migrate --force",
+  "instance": { "size": "flex-1gb", "scheduler": true, "scale_to_zero": true, "sleep_timeout": 5 },
+  "queue": { "size": "mq.flex.256mb", "max_workers": 3 },
+  "databases": {
+    "non_production": { "name": "example-nonprod", "type": "laravel_mysql" },
+    "production": { "name": "example-prod", "type": "laravel_mysql" }
+  },
+  "variables": { "APP_ENV": "local", "APP_DEBUG": "true", "MAIL_MAILER": "log" },
+  "kinds": {
+    "preview": {
+      "branch": { "rule": "slug" },
+      "database": "non_production",
+      "required": { "MAIL_MAILER": { "equals": "log" } }
+    },
+    "staging": {
+      "branch": { "rule": "fixed", "name": "staging" },
+      "database": "non_production"
+    },
+    "production": {
+      "branch": { "rule": "fixed", "name": "production" },
+      "database": "production",
+      "variables": { "APP_ENV": "production", "APP_DEBUG": "false", "MAIL_MAILER": "smtp" },
+      "required": {
+        "APP_ENV": { "equals": "production" },
+        "APP_DEBUG": { "equals": "false" },
+        "MAIL_MAILER": { "not": "log" }
+      },
+      "domains": []
+    }
+  },
+  "secrets": [
+    { "key": "SERVICE_PASSWORD", "id": "secret-0001", "class": "test", "kinds": ["preview", "staging"] },
+    { "key": "SERVICE_PASSWORD", "id": "secret-0002", "class": "live", "kinds": ["production"] }
+  ]
+}
