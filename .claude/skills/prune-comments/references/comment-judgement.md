@@ -1,6 +1,7 @@
 # Comment judgement — worked examples
 
-Every example below is a block of four lines or more. Each shows the disposition, the
+Examples 1–10 are long blocks; 11–16 cover history, trailing comments, one-liners
+and TODOs. Each shows the disposition, the
 result, and — the part that matters — the reasoning that produced it. The pattern to
 internalise: **read the code, find the fact, keep only the fact.**
 
@@ -139,7 +140,7 @@ documents nothing about the code. Delete entirely; git records the change.
 ```
 
 Dead code kept "just in case". Git has it. Delete — and if the user wants a trail,
-the answer is a commit message, not a mausoleum in the source file.
+the answer is a commit message, not dead code in the source file.
 
 ---
 
@@ -179,7 +180,10 @@ own batch.
 Six lines, none removable. Every sentence carries a fact a reader cannot get from the
 code: the version, the mechanism, the failure mode, the upstream issue, the test that
 locks it, and the condition under which it can be deleted. **Report it as kept, with
-that reasoning.** Cutting this to three lines would be vandalism dressed as tidying.
+that reasoning.** Cutting it to three lines would lose facts that are still true.
+
+"Fixed in v3 — revisit when we upgrade" is not history. It describes a constraint the
+code is under now and the condition that ends it.
 
 ---
 
@@ -195,12 +199,119 @@ that reasoning.** Cutting this to three lines would be vandalism dressed as tidy
 Bad comment, real warning, no recoverable fact. You cannot shorten it without either
 losing the warning or inventing a cause you don't know. Flag it in the report as
 needing a human — ideally replaced by a test that fails when the order changes — and
-leave it exactly as it is.
+leave it exactly as it is. "Broke things last time" is history, but it is the only
+evidence for the warning, so it stays until someone finds the cause.
 
 ---
 
-## The test to apply
+## 11. Change narration — DELETE (3 → 0)
 
-For each line, ask: **could a competent reader get this from the code in ten
-seconds?** If yes, it goes. If no, it stays — and the block is as long as the
-remaining answers require, which is almost always one to three lines.
+```php
+// Previously we queried the bookings table directly, but this was slow, so
+// in March 2024 it was changed to use the materialised view instead.
+// See PROJ-812.
+$rows = DB::table('booking_totals_mv')->where('venue_id', $venueId)->get();
+```
+
+All three lines are history: what the code used to do, when it changed, and the
+ticket that changed it. The current code names the view. Delete.
+
+---
+
+## 12. History wrapped around a current constraint — REWRITE (3 → 1)
+
+```js
+// We used to send all fields, but the CRM started rejecting payloads over
+// 64 KB after their 2023 upgrade, so now we strip the notes field.
+// Fixed in #431.
+const payload = omit(contact, ['notes']);
+```
+
+The 64 KB limit is current and not visible in the code. The rest is history:
+
+```js
+// The CRM rejects payloads over 64 KB; notes are the field that pushes contacts over.
+```
+
+---
+
+## 13. Ticket ref that still explains the code — KEEP
+
+```php
+// Carbon::parse misreads 'DD/MM' dates as US format; briannesbitt/Carbon#2785.
+$date = Carbon::createFromFormat('d/m/Y', $input);
+```
+
+The ref points at a bug the code is still working around. Compare "Fixed in #431" in
+case 12, which only records which PR made a change.
+
+---
+
+## 14. Trailing comments — DELETE or KEEP per line
+
+```php
+$total = $subtotal + $tax;           // add tax
+$timeout = 25;                       // seconds; the load balancer cuts at 30
+$user = $request->user();            // now uses the request user
+```
+
+- Line 1: restates the code. Delete the comment; the code is unchanged.
+- Line 2: the unit and the reason for the value are not in the code. Keep.
+- Line 3: "now" is history, and the rest restates the code. Delete.
+
+---
+
+## 15. One-line docblocks and summaries — DELETE
+
+```php
+/** Get the user. */
+public function getUser(): User
+
+/**
+ * Constructor.
+ */
+public function __construct(private BookingRepository $bookings) {}
+```
+
+Each repeats the method name. Delete both.
+
+---
+
+## 16. Attribution tags and TODOs
+
+```php
+/**
+ * Calculates the venue's monthly occupancy.
+ *
+ * @author J. Smith
+ * @since 2.4
+ * TODO: clean this up
+ * TODO: exclude closed days — they count as zero occupancy and drag the average down
+ */
+```
+
+The summary repeats the method name, `@author` and `@since` are history in
+application code, and the first TODO names no problem. The second TODO names a
+current defect, so it stays:
+
+```php
+// TODO: exclude closed days — they count as zero occupancy and drag the average down.
+```
+
+In a published library, keep `@since` on public API: it tells a caller which version
+they need.
+
+---
+
+## The tests to apply
+
+For each line, ask two questions:
+
+1. **Is it about the code as it is now?** If it describes what changed, what it
+   replaced, who, or when, it goes — unless it is the only evidence for a current
+   warning (case 10).
+2. **Could a competent reader get this from the code in ten seconds?** If yes, it
+   goes.
+
+A line that survives both stays, and the comment is as long as the surviving lines
+require — almost always one to three.

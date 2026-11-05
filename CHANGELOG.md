@@ -8,40 +8,38 @@ All notable changes to `claude-skills` are documented here. The format follows
 
 ### Added
 
-- **`prune-comments`** skill — sweeps first-party source from the working directory
-  down for comment blocks of four lines or more and cuts each to three lines or
-  fewer, or deletes it outright where it only restates the code. Also removes
-  notices addressed to coding agents or harnesses and leftover session residue
-  ("as requested", "Step 2 of 5", first-person narration of an edit), extracting any
-  real constraint they were wrapped around rather than deleting blind.
+- **`prune-comments`** skill — reviews every comment in first-party source from the
+  working directory down, including one-liners, trailing comments and docblocks, and
+  keeps a comment only when it describes the code as it is now and tells a reader
+  something the code cannot. Deletes history (change narration, "previously" /
+  "now uses" wording, dates, `@author` / `@since` tags, fixed-in ticket refs),
+  restatement, commented-out code, notices addressed to coding agents or harnesses,
+  and session residue ("as requested", "Step 2 of 5"); rewrites the rest to the
+  present-tense fact. A ticket or upstream ref stays when it explains a workaround
+  still in the code.
   - Ships `scripts/find_comments.py`, a heuristic multi-language scanner (PHP,
     Blade, JS/TS, Vue, Svelte, CSS/SCSS, Python, Ruby, Go, Rust, Java, C-family,
     shell, YAML, SQL, HTML). Uses `git ls-files` where available so `.gitignore` is
     honoured, and hard-skips `vendor/`, `node_modules/`, build output, minified and
-    generated files regardless. Deliberately conservative — a line counts as a
-    comment only when the marker starts the line — and flags blocks as
-    `agent` / `scaffold` / `commented-code` / `preserve` as triage hints.
-  - **Two modes.** *Review* (default) reports every block with its proposed
-    replacement and applies in approved batches. *Sweep* — "just do it", "skip the
-    report", "sweep it" — drops the gate and works straight through, leaving the
-    comments-only diff as the review surface. Sweep removes the gate, not the
-    judgement: the never-touch list, the per-block decision against the code, the
-    "leave the ambiguous ones alone" rule and the full Step 6 verification all still
-    apply, and the closing report carries the per-block detail the up-front one
-    would have. Nothing is committed in either mode.
-  - **Two enforced outcomes**: every rewritten block ends strictly shorter than it
-    started, and the diff contains comment lines only — verified with `git diff -U0`
-    plus a rescan before the run is reported complete.
-  - **Never touched**: licence and SPDX headers, tool directives (`eslint-disable`,
-    `phpcs:`, `# noqa`, `@ts-expect-error`, …), genuine `@generated` banners,
-    docblock tags carrying type or contract information, and framework scaffold
-    comments in `config/` and `bootstrap/` — the last of these because rewriting
-    upstream text makes every framework upgrade diff against your edits. Offered as
-    a separate opt-in batch instead.
-  - `references/comment-judgement.md` carries ten worked before/after cases,
-    including three blocks correctly *left alone*: a docblock whose array-shape tags
-    PHPStan reads, six lines of genuinely load-bearing complexity, and a vague
-    warning with no recoverable fact.
+    generated files regardless. Reports whole-line, block and trailing comments
+    (`--no-trailing`, `--min-lines N` to narrow), skips PHP `#[...]` attributes, and
+    flags comments as `history` / `agent` / `scaffold` / `commented-code` /
+    `preserve` as triage hints.
+  - **Two modes.** *Review* (default) reports every delete and rewrite with its
+    proposed replacement and applies in approved batches. *Sweep* — "just do it",
+    "skip the report", "sweep it" — drops the gate and leaves the comments-only diff
+    as the review surface; the never-touch list, per-comment judgement and full
+    verification still apply. Nothing is committed in either mode.
+  - **Two enforced outcomes**: every changed comment ends shorter or deleted, and the
+    diff changes comments only — a removed trailing comment leaves its code line
+    otherwise byte-for-byte unchanged — verified with `git diff -U0` plus a rescan.
+  - **Never touched**: licence and SPDX headers, tool directives and pragmas,
+    genuine `@generated` banners, docblock tags carrying type or contract
+    information, and framework scaffold comments in `config/` and `bootstrap/`
+    (offered as a separate opt-in batch).
+  - `references/comment-judgement.md` carries sixteen worked cases, covering long
+    blocks, change history, history wrapped around a current constraint, ticket refs
+    that stay, trailing comments, one-line docblocks, attribution tags and TODOs.
 
 ## [1.2.0] — 2026-08-14
 

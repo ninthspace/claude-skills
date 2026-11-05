@@ -58,5 +58,7 @@ The same rule applies to the **Included output styles** table and
 
 ## Git
 
-- Don't `git push` or open PRs unless asked. Additions land via a branch and a
-  reviewed pull request (see `README.md`).
+- Don't `git push` or open PRs unless asked.
+- Commit directly to `main` unless asked to use a branch. When asked to push,
+  push `main`. The branch-and-pull-request flow in `README.md` is for
+  contributors, not for maintainer sessions in this repo.

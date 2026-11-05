@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
 """
-find_comments.py — find long comment blocks in first-party source, from the cwd down.
+find_comments.py — find comments in first-party source, from the cwd down.
 
-Reports every comment block of >= --min-lines consecutive comment lines, excluding
-dependency trees (vendor/, node_modules/, ...), build output, and minified or
-generated files. In a git repository the file set comes from `git ls-files`, so
-.gitignore is honoured automatically; outside one, a static skip list is used.
+Reports every comment block of >= --min-lines consecutive comment lines (default 1,
+so every comment), plus trailing comments after code, excluding dependency trees
+(vendor/, node_modules/, ...), build output, and minified or generated files. In a
+git repository the file set comes from `git ls-files`, so .gitignore is honoured
+automatically; outside one, a static skip list is used.
 
-This is a *heuristic* scanner, not a parser. It errs conservative: a line counts as a
-comment only when the comment marker starts the line, so trailing comments, markers
-inside string literals, and most false positives are simply never reported. Its job is
-to point at blocks worth reading — the judgement about what to shorten or delete is
-made against the code, not from this output.
+This is a *heuristic* scanner, not a parser. A whole-line comment counts only when
+the marker starts the line. A trailing comment counts only when its marker follows
+whitespace and every quote before it on the line is balanced, so most markers inside
+string literals are not reported. Its job is to point at comments worth reading — the
+judgement about what to shorten or delete is made against the code, not from this
+output.
 
 Usage:
-    python find_comments.py                      # cwd down, blocks of 4+ lines
+    python find_comments.py                      # cwd down, every comment
     python find_comments.py app resources        # scoped to paths
-    python find_comments.py --min-lines 5 --json
-    python find_comments.py --only-flagged       # only blocks with an agent/artifact tell
+    python find_comments.py --min-lines 4        # long blocks only; no trailing comments
+    python find_comments.py --no-trailing --json
+    python find_comments.py --only-flagged       # only comments with an agent/history/artifact tell
 
 Output (text) is one record per block:
     path:start-end  (N lines) [kind] [flags]
@@ -133,12 +136,31 @@ SCAFFOLD_RE = re.compile(
     re.I,
 )
 
+HISTORY_RE = re.compile(
+    r"(\b(previously|formerly|originally|no longer|used to|anymore|any more|"
+    r"legacy|hotfix|bugfix|backwards?[- ]compat\w*)\b|"
+    r"\b(was|were|has been|have been) (changed|moved|renamed|added|removed|replaced|"
+    r"refactored|rewritten|introduced|switched|migrated)\b|"
+    r"\b(changed|moved|renamed|replaced|switched|migrated|refactored) (from|to)\b|"
+    r"\b(old|new|original) (version|implementation|approach|code|behaviou?r|logic|way)\b|"
+    r"\b(now|instead) (uses?|calls?|returns?|reads?|writes?)\b|"
+    r"\b(fixe[sd]|resolves|closes|added in|changed in|introduced in)\s+(#|[A-Z]{2,}-)\d+|"
+    r"\b(before|after) (the|this|that) (change|refactor|migration|upgrade|rewrite)\b|"
+    r"\b(19|20)\d{2}-\d{2}(-\d{2})?\b|"
+    r"@author|@since|@version|@changed)",
+    re.I,
+)
+
 PRESERVE_RE = re.compile(
     r"(copyright|\(c\)\s*[0-9]{4}|spdx-license|licen[cs]e|all rights reserved|"
     r"@license|@copyright|"
-    r"eslint-disable|prettier-ignore|stylelint-disable|"
-    r"phpcs:|phpstan-|psalm-|@codeCoverageIgnore|noqa|type:\s*ignore|"
-    r"ts-expect-error|@ts-ignore|nosec|gosec:|golangci|"
+    r"eslint-disable|eslint-enable|prettier-ignore|stylelint-disable|"
+    r"phpcs:|phpstan-|psalm-|@codeCoverageIgnore|noqa|type:\s*ignore|pyright:|mypy:|"
+    r"pylint:|rubocop:|ts-expect-error|@ts-ignore|@ts-check|@ts-nocheck|"
+    r"/// <reference|nosec|gosec:|golangci|go:build|go:generate|go:embed|nolint|"
+    r"shellcheck|frozen_string_literal|-\*-.*-\*-|coding[:=]|vim:|"
+    r"istanbul ignore|c8 ignore|v8 ignore|webpackChunkName|@vite-ignore|@jsx|@flow|"
+    r"syntax=|yaml-language-server|#region|#endregion|"
     r"@template|@phpstan|@psalm|@deprecated|@throws|@var\s+|@param\s+[\\\w|\[\]<>]+\s+\$)",
     re.I,
 )
@@ -157,10 +179,13 @@ def flags_for(body_lines):
         out.append("agent")
     if SCAFFOLD_RE.search(text):
         out.append("scaffold")
+    if HISTORY_RE.search(text):
+        out.append("history")
     if PRESERVE_RE.search(text):
         out.append("preserve")
     stripped = [ln for ln in body_lines if ln.strip()]
-    if stripped and sum(bool(CODE_LIKE_RE.search(ln)) for ln in stripped) >= max(2, len(stripped) // 2):
+    need = 1 if len(stripped) == 1 else max(2, len(stripped) // 2)
+    if stripped and sum(bool(CODE_LIKE_RE.search(ln)) for ln in stripped) >= need:
         out.append("commented-code")
     return out
 
@@ -244,7 +269,32 @@ def collect(paths):
 # Block detection.
 # ---------------------------------------------------------------------------
 
-def find_blocks(lines, syntax, min_lines):
+def starts_comment(s, markers):
+    """True when the stripped line opens with a line-comment marker."""
+    if s.startswith("#["):
+        # PHP 8 / Rust attributes, not comments.
+        return False
+    return any(s.startswith(m) for m in markers)
+
+
+def trailing_comment(raw, markers):
+    """Return the column where a trailing comment starts on a code line, or None."""
+    for m in markers:
+        pos = 0
+        while True:
+            pos = raw.find(m, pos)
+            if pos <= 0:
+                break
+            before = raw[:pos]
+            if before[-1] in " \t" and before.strip() and all(
+                (before.count(q) - before.count("\\" + q)) % 2 == 0 for q in ("'", '"', "`")
+            ) and not (m == "#" and raw[pos:pos + 2] == "#["):
+                return pos
+            pos += len(m)
+    return None
+
+
+def find_blocks(lines, syntax, min_lines, trailing=True):
     """Yield (start, end, kind) 1-indexed inclusive comment blocks of min_lines or more."""
     blocks = []
     line_markers = syntax["line"]
@@ -265,6 +315,9 @@ def find_blocks(lines, syntax, min_lines):
             o, c = opened
             # A one-line block comment closes on the same line after its opener.
             if s.find(c, len(o)) != -1:
+                if min_lines <= 1:
+                    kind = "docblock" if s.startswith("/**") or s.startswith('"""') else "block"
+                    blocks.append((i + 1, i + 1, kind))
                 i += 1
                 continue
             start = i
@@ -278,11 +331,10 @@ def find_blocks(lines, syntax, min_lines):
             i += 1
             continue
 
-        if line_markers and any(s.startswith(m) for m in line_markers):
+        if line_markers and starts_comment(s, line_markers):
             start = i
             while i < n:
-                nxt = lines[i].strip()
-                if not any(nxt.startswith(m) for m in line_markers):
+                if not starts_comment(lines[i].strip(), line_markers):
                     break
                 i += 1
             end = i - 1
@@ -290,12 +342,15 @@ def find_blocks(lines, syntax, min_lines):
                 blocks.append((start + 1, end + 1, "line"))
             continue
 
+        if trailing and line_markers and trailing_comment(raw, line_markers) is not None:
+            blocks.append((i + 1, i + 1, "trailing"))
+
         i += 1
 
     return blocks
 
 
-def scan(files, min_lines):
+def scan(files, min_lines, trailing=True):
     results = []
     for path in files:
         syntax = syntax_for(path)
@@ -306,8 +361,10 @@ def scan(files, min_lines):
             continue
         if any(len(ln) > MAX_LINE_LEN for ln in lines[:200]):
             continue
-        for start, end, kind in find_blocks(lines, syntax, min_lines):
+        for start, end, kind in find_blocks(lines, syntax, min_lines, trailing and min_lines <= 1):
             body = lines[start - 1:end]
+            if kind == "trailing":
+                body = [body[0][trailing_comment(body[0], syntax["line"]):]]
             results.append({
                 "file": os.path.relpath(path),
                 "start": start,
@@ -323,9 +380,11 @@ def scan(files, min_lines):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("paths", nargs="*", help="files or directories (default: cwd)")
-    ap.add_argument("--min-lines", type=int, default=4, help="minimum block length to report (default 4)")
+    ap.add_argument("--min-lines", type=int, default=1,
+                    help="minimum block length to report (default 1; above 1 also drops trailing comments)")
+    ap.add_argument("--no-trailing", action="store_true", help="skip trailing comments after code")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
-    ap.add_argument("--only-flagged", action="store_true", help="only blocks with a flag other than 'preserve'")
+    ap.add_argument("--only-flagged", action="store_true", help="only comments with a flag other than 'preserve'")
     ap.add_argument("--exclude", action="append", default=[], metavar="GLOB",
                     help="additional path glob to skip (repeatable)")
     args = ap.parse_args()
@@ -334,7 +393,7 @@ def main():
     if args.exclude:
         files = [f for f in files if not any(fnmatch.fnmatch(f, g) for g in args.exclude)]
 
-    results = scan(files, args.min_lines)
+    results = scan(files, args.min_lines, not args.no_trailing)
     if args.only_flagged:
         results = [r for r in results if [f for f in r["flags"] if f != "preserve"]]
 
@@ -344,7 +403,7 @@ def main():
         return
 
     if not results:
-        print(f"No comment blocks of {args.min_lines}+ lines in {len(files)} files.")
+        print(f"No comments found in {len(files)} files.")
         return
 
     total = 0
@@ -355,7 +414,7 @@ def main():
         for ln in r["text"].splitlines():
             print(f"    {ln}")
         print()
-    print(f"{len(results)} blocks, {total} comment lines, across {len(files)} files scanned.")
+    print(f"{len(results)} comments, {total} lines, across {len(files)} files scanned.")
 
 
 if __name__ == "__main__":

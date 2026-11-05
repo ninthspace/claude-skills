@@ -60,7 +60,22 @@ If a style guide exists, its rules win. Record which authority you used in the r
 
 If the user explicitly asks to clean up out-of-scope text, that's fine — but it's never part of the default sweep.
 
+A single file passed as the argument is that explicit request, even when it sits in a planning or artifacts folder. Outward correspondence (a letter, e-mail or question list for a supplier or partner) is the common case. Treat it as customer-facing and apply the correspondence checks in Step 3.
+
 ## Step 3 — Detect textual tells
+
+Read the whole document before judging single sentences. Several tells only show at document level:
+
+- **Repeated stock phrases.** Count recurring openers and hedges across the file ("we would rather", "we would like", "worth …", "One more on …", "To be clear"). Three or more of one phrase is a finding, even when each instance reads well alone.
+- **Signposting transitions.** "There is a second half to this", "One more on the same subject", "Worth being clear about …". Replace with the question or point itself.
+- **Abstract nouns used as metaphor.** "the shape of a request", "every shape we tried". Use the literal word: format, structure, variation, field.
+- **Facts that do not add up.** Counts that do not sum, or a claim contradicted further down. Not an AI tell, but report it under its own heading. Do not invent the missing fact; propose wording that drops the unsupported figure, or ask.
+
+For correspondence to an outside party, also check register:
+
+- **Firm or defensive phrasing.** "we need confirmed", "we do not want to find …", "not a problem for us. We are not asking for one", "only one of them is what you intend", "a lapsed membership that nobody chased", bold **not**. Rewrite as plain requests and neutral statements of consequence. Do not bury the question itself.
+
+**After every batch of rewrites, re-count the replacement phrases across the whole file.** A fix must not create a new repetition. Softening four "we would rather" into "we would like" produced seven "we would like"; vary the construction instead (state the question directly, "please tell us …", "it would help to know …", or a plain statement of fact).
 
 Load `references/ai-tells.md` for the full taxonomy with examples and rewrites. The categories:
 

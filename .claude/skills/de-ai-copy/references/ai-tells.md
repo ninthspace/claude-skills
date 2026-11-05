@@ -26,6 +26,8 @@ Words and phrases that cluster heavily in LLM output. Presence of one isn't damn
 | whether you're X or Y | false-inclusive framing | address the actual reader |
 | at the end of the day / when it comes to | filler connectives | cut |
 | rich / comprehensive / holistic / wide range of | vague scale claims | the actual number or scope |
+| shape (of a request, response, problem) | abstract noun as metaphor | format, structure, fields, variation |
+| worth confirming / worth being clear / worth asking about | stock hedge; repeats down a page | state the point or the question |
 
 **Heuristic:** if removing the word changes nothing about meaning, it's filler.
 
@@ -58,6 +60,14 @@ Every sentence the same length and shape; every heading the same grammatical for
 *"We take security seriously." "Built with the user in mind." "Designed for performance."*
 - **Fix:** replace with one concrete fact. *"Card data never touches our servers — Stripe handles it."*
 
+### Repeated stock phrases across a document
+The same opener or hedge recurring paragraph after paragraph: "we would rather", "we would like", "To be clear", "One more on the same subject". Each sentence reads fine; the repetition is the tell.
+- **Fix:** count them across the file. Keep one, rewrite the rest with different constructions. Re-count after rewriting so the replacement does not become the new repeat.
+
+### Signposting transitions
+*"There is a second half to this, which is …", "One more on the same mechanism.", "Worth being clear about what we are building, because …"*
+- **Fix:** start with the point. *"The second question is how far the first payment date can be moved."*
+
 ### Summary sentence that restates the obvious
 LLMs close paragraphs by re-summarising what they just said.
 - **Fix:** cut the closing restatement; trust the reader.
@@ -89,6 +99,10 @@ Exclamation marks, "Amazing!", "We're thrilled to…", relentless positivity.
 ### "Let's dive in" / "Let's explore" / "Buckle up"
 Conversational filler that no product UI needs.
 - **Fix:** delete.
+
+### Firm or defensive register in correspondence
+In letters and question lists to suppliers or partners, LLM drafts tend to pre-empt objections and sound curt: "we need confirmed", "we do not want to find a missing step", "is not a problem for us. We are not asking for one.", "only one of them is what you intend", emphasis in bold on **not**.
+- **Fix:** plain requests and neutral consequences. *"it would help to know now rather than in November"*, *"so we do not need a payment webhook"*, *"please tell us which one you intend"*. Keep the question itself clear.
 
 ### Manufactured social proof phrasing
 *"Trusted by businesses worldwide", "Loved by teams everywhere"* with no names or numbers.
