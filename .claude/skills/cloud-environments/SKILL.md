@@ -5,6 +5,8 @@ description: Creates, checks and removes Laravel Cloud environments (on-demand p
 
 # cloud-environments
 
+**Requires the Laravel Cloud CLI and its `deploying-to-cloud` skill.** Neither ships in this repository. Install the CLI with `composer require --dev laravel/cloud-cli` (or `composer global require laravel/cloud-cli`), then install its skills with `cloud skills:install --global` (or `--project`).
+
 
 Builds Laravel Cloud environments from a manifest, `cloud-environments.json`, at the root of the repository. It works for any repository and organisation: nothing in this skill names one.
 
