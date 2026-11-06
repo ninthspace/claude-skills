@@ -7,16 +7,23 @@ namespace CloudEnvironments;
 use Closure;
 
 /**
- * Runs an approved plan. Before any call it checks the hash, refuses delete steps and any
- * secret the manifest does not allow for the plan's kind, checks each variable still has the
- * value the plan's digest was made from, and re-reads Cloud: a projected field that has
- * changed since the plan was made refuses the run. Then it runs the steps in order, resolving
+ * Runs an approved plan. Before any call it checks the hash, refuses delete steps, any command
+ * a plan never emits and any secret the manifest does not allow for the plan's kind, and checks
+ * each variable still has the value the plan's digest was made from. Before any write it
+ * re-reads Cloud and derives the plan again: a projected field that has changed since the plan
+ * was made, or a step that differs from the derived one, refuses the run. Then it runs the steps in order, resolving
  * `{step:N.path}` from earlier steps' JSON and waiting for each created cluster, schema and
  * environment to be ready, and stops at the first failure.
  */
 final class Applier
 {
     private const POLL_SECONDS = 10;
+
+    /** The commands a plan's create and change steps emit; apply runs no other. */
+    private const COMMANDS = [
+        'application:create', 'environment:create', 'environment:update', 'instance:update', 'database-cluster:create',
+        'database-cluster:update', 'database:create', 'managed-queue:create', 'environment:variables', 'environment-secret:attach', 'domain:create',
+    ];
 
     private Closure $sleep;
 
@@ -72,6 +79,10 @@ final class Applier
                 throw new ApplyRefused("step {$step['n']} creates a secret; secrets are created only by `secrets`");
             }
 
+            if (! in_array($step['command'], self::COMMANDS, true)) {
+                throw new ApplyRefused("step {$step['n']} runs {$step['command']}, which a plan never emits");
+            }
+
             if ($step['command'] === 'environment-secret:attach') {
                 foreach (array_slice($step['args'], 1) as $id) {
                     if (! in_array($id, $allowed, true)) {
@@ -96,6 +107,12 @@ final class Applier
             $changed = array_keys(array_filter($plan['state'], fn ($value, $key) => PlanFile::canonical($value) !== PlanFile::canonical($fresh['state'][$key] ?? null), ARRAY_FILTER_USE_BOTH));
 
             throw new ApplyRefused('Cloud has changed since the plan was made ('.implode(', ', $changed).'); make and approve a new plan');
+        }
+
+        // Run only what plan itself derives: a plan file edited or written by hand before it was
+        // rendered could otherwise carry a command under a matching hash.
+        if (PlanFile::canonical($fresh['steps']) !== PlanFile::canonical($plan['steps'])) {
+            throw new ApplyRefused('the plan\'s steps are not the ones plan derives from the manifest and Cloud; make and approve a new plan');
         }
 
         $outputs = [];

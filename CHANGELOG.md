@@ -17,9 +17,10 @@ All notable changes to `claude-skills` are documented here. The format follows
     application and the clusters and secret IDs it names; variable values are stored as
     digests. `render` draws plans as one self-contained HTML page for approval, with
     organisation-level secrets as a separate band and a dated cost estimate.
-  - `apply` runs a plan only with its approved hash, refuses delete steps and any secret the
-    manifest does not allow for the kind, re-reads Cloud first, and stops at the first failed
-    step. `verify` compares a built environment with the manifest. `remove` and `preview down`
+  - `apply` runs a plan only with its approved hash, refuses delete steps, any command a plan
+    never emits and any secret the manifest does not allow for the kind, re-reads Cloud and
+    derives the plan again first, refusing any step that differs from the derived one, and
+    stops at the first failed step. `verify` compares a built environment with the manifest. `remove` and `preview down`
     delete one owned environment (and its unshared schema) after a named confirmation.
     `secrets`, run in the user's own terminal, prompts for each secret's value with echo off,
     creates it tagged by application, key and class, and writes its ID into the manifest;

