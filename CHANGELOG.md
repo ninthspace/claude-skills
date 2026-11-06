@@ -6,6 +6,12 @@ All notable changes to `claude-skills` are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-11-06
+
+Three Laravel Cloud skills — `cloud-environments`, `assess-for-laravel-cloud` and
+`evolving-a-cloud-app` — and `prune-comments`. The Cloud skills depend on Laravel's
+`deploying-to-cloud` skill, which ships with the Laravel Cloud CLI.
+
 ### Added
 
 - **`cloud-environments`** skill — creates, checks and removes Laravel Cloud environments
@@ -65,6 +71,25 @@ All notable changes to `claude-skills` are documented here. The format follows
   - `references/comment-judgement.md` carries sixteen worked cases, covering long
     blocks, change history, history wrapped around a current constraint, ticket refs
     that stay, trailing comments, one-line docblocks, attribution tags and TODOs.
+
+- **`assess-for-laravel-cloud`** skill — assesses an existing Laravel application for a move to
+  Laravel Cloud and produces a sized, costed proposal: the resources it needs, the size of each,
+  a monthly cost range, and the code changes needed before the first deploy. Compares against a
+  current VPS or Forge server. `reference/rates.md` holds dated Cloud rates (London and US East);
+  `reference/repo-scan.md` lists what to read in the repository. Status: sketch.
+
+- **`evolving-a-cloud-app`** skill — plans and carries out changes to an application already on
+  Laravel Cloud: resizing compute, changing database engine or version, moving region, replacing
+  a cache, and migrating queues or object storage, with reversibility and cost for each change.
+  Status: sketch.
+
+### Changed
+
+- **`cloud-environments`**, **`assess-for-laravel-cloud`** and **`evolving-a-cloud-app`** state
+  that they require Laravel's `deploying-to-cloud` skill, which is not in this repository. It
+  ships with the Laravel Cloud CLI: `composer require --dev laravel/cloud-cli`, then
+  `cloud skills:install --global` (or `--project`). The README says the same under the skills
+  table.
 
 ## [1.2.0] — 2026-08-14
 
