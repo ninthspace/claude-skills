@@ -177,6 +177,12 @@ final class ManifestValidator
                 $errors[] = "{$at}.branch.rule: {$kind} needs a fixed branch, since it has no slug";
             }
 
+            foreach (['build_command', 'deploy_command'] as $field) {
+                if (is_array($config) && array_key_exists($field, $config) && (! is_string($config[$field]) || trim($config[$field]) === '')) {
+                    $errors[] = "{$at}.{$field}: must be a non-empty string";
+                }
+            }
+
             if (array_key_exists('push_to_deploy', is_array($config) ? $config : []) && ! is_bool($config['push_to_deploy'])) {
                 $errors[] = "{$at}.push_to_deploy: must be true or false";
             }

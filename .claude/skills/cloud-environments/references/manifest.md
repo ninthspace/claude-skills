@@ -6,7 +6,7 @@
 | --- | --- |
 | `organisation`, `application`, `repository`, `region` | Required. The organisation the CLI must be authenticated to, the application's name, `owner/repo`, and the Cloud region. |
 | `php` | `version` and `extensions`. |
-| `build_command`, `deploy_command` | Strings. |
+| `build_command`, `deploy_command` | Strings: the defaults for every kind. A kind may override either. |
 | `instance` | `size`, `scheduler`, `scale_to_zero`, `sleep_timeout` (minutes). |
 | `queue` | The managed queue: `size`, `max_workers`, and `min_workers` (0 lets it scale to zero; Cloud sets 1 when it is left out). |
 | `databases` | Named clusters (`name`, `type`, and optionally `size` as `cloud database:types` lists it, such as `mysql-flex-512mb`, `storage` in GB (5 or more) and `scale_to_zero_after` in seconds (0 for never, up to 3600)). A kind's `database` names one; kinds may share a cluster and each takes its own schema. |
@@ -22,3 +22,4 @@ A kind holds:
 - `required`: per variable, `{"equals": "log"}` or `{"not": "log"}`. The kind's resolved variables must satisfy it.
 - `domains`: optional custom domains.
 - `push_to_deploy`: optional, true or false; set by `plan`/`apply` and checked by `verify`.
+- `build_command`, `deploy_command`: optional strings that replace the top-level values for this kind, such as a deploy command that seeds staging and previews but not production. `plan` sets them and `verify` checks them.

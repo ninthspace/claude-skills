@@ -420,6 +420,8 @@ test('verify: each difference from the manifest fails, naming the item', functio
         'managed queue size or workers' => fn (World $w) => $w->change(function (array &$x) { foreach ($x['instances'] as &$i) { if ($i['type'] === 'managed_queue') { $i['maxReplicas'] = 9; } } }),
         "database: the environment's schema" => fn (World $w) => changePreview($w, function (array &$e) { $e['databaseSchemaId'] = 'schema-other'; }),
         'branch: elsewhere' => fn (World $w) => changePreview($w, function (array &$e) { $e['branch'] = 'elsewhere'; }),
+        'deploy command: "other"' => fn (World $w) => changePreview($w, function (array &$e) { $e['deployCommand'] = 'other'; }),
+        'build command: "other"' => fn (World $w) => changePreview($w, function (array &$e) { $e['buildCommand'] = 'other'; }),
     ];
 
     foreach ($cases as $expected => $break) {
@@ -938,4 +940,16 @@ test('apply: a step running a command a plan never emits is refused before any c
 
         assertSame([], $world->calls(), "{$command}: no call at all");
     }
+});
+
+test('verify: a kind\'s own deploy command is the one checked', function () {
+    $manifest = validManifest();
+    $manifest['kinds']['preview']['deploy_command'] = 'seed and migrate';
+    $world = appliedPreview();
+
+    assertContains('deploy command: '.json_encode(validManifest()['deploy_command']).', expected "seed and migrate"', implode("\n", verifyPreview($world, $manifest)));
+
+    changePreview($world, function (array &$e) { $e['deployCommand'] = 'seed and migrate'; });
+
+    assertSame([], verifyPreview($world, $manifest));
 });

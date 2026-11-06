@@ -140,12 +140,12 @@ final class Planner
 
         $wanted = ['--branch' => $branch];
 
-        if (isset($m['build_command'])) {
-            $wanted['--build-command'] = $m['build_command'];
-        }
+        foreach (['--build-command' => 'build_command', '--deploy-command' => 'deploy_command'] as $option => $field) {
+            $command = Manifest::commandFor($m, $kind, $field);
 
-        if (isset($m['deploy_command'])) {
-            $wanted['--deploy-command'] = $m['deploy_command'];
+            if ($command !== null) {
+                $wanted[$option] = $command;
+            }
         }
 
         $current = ['--branch' => $env['branch'] ?? null, '--build-command' => $env['buildCommand'] ?? null, '--deploy-command' => $env['deployCommand'] ?? null];
@@ -274,7 +274,7 @@ final class Planner
                 'application' => $app === null ? null : ['id' => $app['id'], 'defaultEnvironmentId' => $app['defaultEnvironmentId'] ?? null],
                 'cluster' => $cluster === null ? null : array_merge(['id' => $cluster['id']], self::clusterSettingsNow($m['databases'][$m['kinds'][$kind]['database']], $cluster)),
                 'schema' => $schema === null ? null : ['id' => $schema['id']],
-                'environment' => $env === null ? null : array_filter(['usesPushToDeploy' => isset($m['kinds'][$kind]['push_to_deploy']) ? ($env['usesPushToDeploy'] ?? null) : null, 'id' => $env['id'], 'branch' => $env['branch'] ?? null, 'buildCommand' => isset($m['build_command']) ? ($env['buildCommand'] ?? null) : null, 'deployCommand' => isset($m['deploy_command']) ? ($env['deployCommand'] ?? null) : null, 'databaseSchemaId' => $env['databaseSchemaId'] ?? null], fn ($v) => $v !== null),
+                'environment' => $env === null ? null : array_filter(['usesPushToDeploy' => isset($m['kinds'][$kind]['push_to_deploy']) ? ($env['usesPushToDeploy'] ?? null) : null, 'id' => $env['id'], 'branch' => $env['branch'] ?? null, 'buildCommand' => Manifest::commandFor($m, $kind, 'build_command') !== null ? ($env['buildCommand'] ?? null) : null, 'deployCommand' => Manifest::commandFor($m, $kind, 'deploy_command') !== null ? ($env['deployCommand'] ?? null) : null, 'databaseSchemaId' => $env['databaseSchemaId'] ?? null], fn ($v) => $v !== null),
                 'instance' => $appInstance === null ? null : ['id' => $appInstance['id'], 'size' => $appInstance['size'] ?? null, 'usesScheduler' => $appInstance['usesScheduler'] ?? null, 'usesHibernation' => $detail['usesHibernation'] ?? null, 'hibernationTimeout' => $appInstance['hibernationTimeout'] ?? null],
                 'queue' => $queue === null ? null : array_filter(['id' => $queue['id'], 'size' => $queue['size'] ?? null, 'maxReplicas' => $queue['maxReplicas'] ?? null, 'minReplicas' => isset($m['queue']['min_workers']) ? ($queue['minReplicas'] ?? null) : null], fn ($v) => $v !== null),
                 'variables' => $variableState,

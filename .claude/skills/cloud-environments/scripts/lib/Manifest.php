@@ -46,6 +46,16 @@ final class Manifest
     }
 
     /**
+     * A kind's `build_command` or `deploy_command`: its own value, else the top-level one, else null.
+     *
+     * @param  array<string, mixed>  $manifest
+     */
+    public static function commandFor(array $manifest, string $kind, string $field): ?string
+    {
+        return $manifest['kinds'][$kind][$field] ?? $manifest[$field] ?? null;
+    }
+
+    /**
      * @param  array<string, mixed>  $manifest
      * @return mixed the kind's required map, as declared
      */

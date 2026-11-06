@@ -242,6 +242,8 @@ test('validator: the sections the planner reads are checked for presence and typ
         'kinds.preview.domains.0' => ['x'],
         'build_command' => '',
         'deploy_command' => 5,
+        'kinds.preview.build_command' => '  ',
+        'kinds.preview.deploy_command' => ['php artisan migrate'],
     ];
 
     foreach ($cases as $path => $value) {

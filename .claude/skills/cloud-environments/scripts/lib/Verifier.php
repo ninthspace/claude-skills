@@ -59,6 +59,14 @@ final class Verifier
             $failures[] = 'push to deploy: '.json_encode($env['usesPushToDeploy'] ?? null).', expected '.json_encode($m['kinds'][$kind]['push_to_deploy']);
         }
 
+        foreach (['build_command' => ['buildCommand', 'build command'], 'deploy_command' => ['deployCommand', 'deploy command']] as $field => [$property, $label]) {
+            $expected = Manifest::commandFor($m, $kind, $field);
+
+            if ($expected !== null && ($env[$property] ?? null) !== $expected) {
+                $failures[] = "{$label}: ".json_encode($env[$property] ?? null).', expected '.json_encode($expected);
+            }
+        }
+
         if (isset($m['php']['version']) && (string) ($detail['phpMajorVersion'] ?? '') !== (string) $m['php']['version']) {
             $failures[] = 'PHP version: '.($detail['phpMajorVersion'] ?? 'unknown').", expected {$m['php']['version']}";
         }

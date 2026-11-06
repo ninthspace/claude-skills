@@ -514,3 +514,19 @@ test('plan: the schema check reads each application\'s environments, since appli
 
     assertTrue(in_array(['environment:list', 'app-8', '--json', '--no-interaction'], array_column($state->calls(), 'argv'), true), 'the other application\'s environments were listed');
 });
+
+test('plan: a kind\'s own build and deploy commands replace the top-level ones for that kind only', function () {
+    $manifest = validManifest();
+    $manifest['kinds']['preview']['deploy_command'] = 'php artisan migrate --force && php artisan db:seed --force';
+    $byKey = array_column(planPreview(completePreviewState(), $manifest)['steps'], null, 'key');
+
+    assertSame('change', $byKey['environment-settings']['action']);
+    assertSame(['env-1', '--deploy-command=php artisan migrate --force && php artisan db:seed --force', '--force'], $byKey['environment-settings']['args']);
+
+    // Control: an override on another kind leaves the preview at the top-level commands.
+    $control = validManifest();
+    $control['kinds']['staging']['deploy_command'] = 'php artisan migrate --force && php artisan db:seed --force';
+    $control['kinds']['staging']['build_command'] = 'npm ci';
+
+    assertSame('keep', actions(planPreview(completePreviewState(), $control))['environment-settings']);
+});

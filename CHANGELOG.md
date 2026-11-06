@@ -20,7 +20,9 @@ All notable changes to `claude-skills` are documented here. The format follows
   - `apply` runs a plan only with its approved hash, refuses delete steps, any command a plan
     never emits and any secret the manifest does not allow for the kind, re-reads Cloud and
     derives the plan again first, refusing any step that differs from the derived one, and
-    stops at the first failed step. `verify` compares a built environment with the manifest. `remove` and `preview down`
+    stops at the first failed step. A kind may override the top-level `build_command` and
+    `deploy_command` (for example, seeding staging and previews but not production); `plan`
+    sets each kind's commands and `verify` checks them. `verify` compares a built environment with the manifest. `remove` and `preview down`
     delete one owned environment (and its unshared schema) after a named confirmation.
     `secrets`, run in the user's own terminal, prompts for each secret's value with echo off,
     creates it tagged by application, key and class, and writes its ID into the manifest;
