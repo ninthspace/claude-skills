@@ -29,13 +29,13 @@ Keep these rules as they are. Nearly every reader takes their opposites as carel
 
 These rules are the default author's preferences. Check each one against the samples:
 
-- The em and en dash ban
-- The word lists (the shared list in `../de-ai-copy/references/ai-tells.md` §1). Do not copy or edit that file for one writer. Record the writer's exceptions in the profile instead, as a "Word list exceptions" line under the matching rule, for example "Uses 'really' as an intensifier; allowed."
+- The em dash limit (one per paragraph)
+- The word lists in `references/word-list.md`. Do not copy or edit that file for one writer. Record the writer's exceptions in the profile instead, as a "Word list exceptions" line under the matching rule, for example "Uses 'really' as an intensifier; allowed."
 - Using "I"
 - The strict limits on rule of three, parataxis, parallel structure and contrasting pairs
 - The Formatting entries: boldface, inline-header lists, title case, emoji and curly quotes
 
-When the samples show the writer doing one of these on purpose, replace the rule with one that describes how they do it. A writer who uses a dash once a paragraph for an aside gets a rule that allows one aside dash per paragraph. With no evidence either way, keep the default rule.
+When the samples show the writer doing one of these on purpose, replace the rule with one that describes how they do it. A writer who never uses a dash gets a rule that bans them; one who uses two in most paragraphs gets a rule that describes where they put them. With no evidence either way, keep the default rule.
 
 ## 4. Write the profile
 

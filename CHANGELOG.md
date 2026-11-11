@@ -6,6 +6,26 @@ All notable changes to `claude-skills` are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **`natural-voice`** skill — writes, edits and audits text so it reads as written by a
+  person, from a voice profile of rules with Bad/Better examples and a pre-send checklist.
+  Imported from [hcastro/agent-artifacts](https://github.com/hcastro/agent-artifacts) at
+  `421d297` (MIT). Modes: write, edit, audit (repository copy, report first) and adapt
+  (build a profile from another writer's samples). Profiles are git-ignored.
+
+### Changed
+
+- `natural-voice` takes over `de-ai-copy`'s work as its audit mode
+  (`references/auditing.md`). One word list (`references/word-list.md`) serves every mode and
+  profile. Em dashes: at most one per paragraph. In audit mode a project's own style guide
+  overrides the profile.
+
+### Removed
+
+- **`de-ai-copy`** skill — merged into `natural-voice`. Delete the
+  `~/.claude/skills/de-ai-copy` symlink and rerun `./install.sh`.
+
 ## [1.3.0] — 2026-11-06
 
 Three Laravel Cloud skills — `cloud-environments`, `assess-for-laravel-cloud` and

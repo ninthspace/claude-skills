@@ -2,13 +2,13 @@
 
 These rules cover anything you write for another person to read: texts, emails, letters, notes, posts and cards. Apply them to every draft before you send it. Only text labeled "Bad:" in this file breaks them.
 
-The word lists behind several rules live in one shared file: section 1 of `../de-ai-copy/references/ai-tells.md`, with the path given from this skill's folder. "Shared list §1.x" below means a subsection of that file.
+The word lists behind several rules live in `word-list.md`, next to this file. "Word list: X" below names a section of it.
 
 ## Contents
 
 - How to write: shape, register, dates, secondhand news, caveats, voice
 - Constructions to avoid: contrast and negation, paragraph structure, rhythm, punctuation and openers, word choice, tone
-- Other signs of AI writing: content, language, formatting, communication
+- Other signs of AI writing: content, language, formatting, document level, communication
 - Pre-send checklist
 
 ## How to write
@@ -133,7 +133,7 @@ Holding back the point so it can be revealed next, usually through a question or
 
 #### Rhetorical crutches
 
-Stock phrases that announce a point without making it. Words: shared list §1.9.
+Stock phrases that announce a point without making it. Word list: Stock openers and crutches.
 
 - Bad: "Here's the thing: the dog needs more exercise."
 - Better: "The dog chewed through the couch cushion again, so I'm adding a second walk."
@@ -165,7 +165,15 @@ Sentences of the same length in a row read as machine output. Vary length unpred
 
 #### Em dashes
 
-Replace em dashes, and en dashes used as punctuation, with a comma, colon, parentheses or a new sentence. Use a hyphen for ranges (10-20).
+Use at most one em dash in a paragraph, and prefer none. En dashes used as punctuation count as em dashes. Replace the rest according to the grammar:
+
+- Two independent clauses: a full stop. This is the most common fix.
+- A list or appositive in the middle of a sentence: commas, or a real list.
+- An explanation or definition: a colon.
+- An aside: parentheses or commas.
+- An afterthought at the end: a full stop, or delete it if it adds nothing.
+
+Use a hyphen for ranges (10-20).
 
 - Bad: "The hike was short—two miles—but the view was worth it."
 - Better: "The hike is two miles, and from the top you can see the whole lake."
@@ -195,21 +203,21 @@ A verb turned into a noun, which then needs a weak verb to carry it.
 
 #### Hedging qualifiers
 
-Words that soften a claim without adding information. Words: shared list §1.7. When the uncertainty is real, say it once and say where it comes from.
+Words that soften a claim without adding information. Word list: Hedging qualifiers. When the uncertainty is real, say it once and say where it comes from.
 
 - Bad: "It might potentially rain a bit at some point tomorrow."
 - Better: "The forecast says rain after three, so bring a jacket."
 
 #### Filler intensifiers and filler phrases
 
-Cut intensifiers. The sentence means the same without them. Filler phrases pad a short idea, so replace them. Words, phrases and replacements: shared list §1.8.
+Cut intensifiers. The sentence means the same without them. Filler phrases pad a short idea, so replace them. Word list: Filler intensifiers and filler phrases.
 
 - Bad: "I just really wanted to say that I truly appreciated the flowers, due to the fact that it was a hard week."
 - Better: "Thank you for the flowers. They came on the worst day of a hard week."
 
 #### Corporate-register verbs
 
-Verbs from slide decks and press releases. Words: shared list §1.1. Literal uses such as "drive to the coast" or "the lake reflects the mountains" are fine.
+Verbs from slide decks and press releases. Word list: Corporate-register verbs. Literal uses such as "drive to the coast" or "the lake reflects the mountains" are fine.
 
 - Bad: "We're leveraging the long weekend to facilitate some quality family time."
 - Better: "We're taking the kids camping over the long weekend."
@@ -238,7 +246,7 @@ Negative parallelisms, rule of three, em dashes, filler, hedging and generic upb
 
 #### Inflated significance
 
-Claims that an ordinary event marks a turning point or stands for something larger. Words: shared list §1.4.
+Claims that an ordinary event marks a turning point or stands for something larger. Word list: Inflated significance.
 
 - Bad: "Our move to Denver marks a pivotal moment in our family's journey."
 - Better: "We're moving to Denver in May to be closer to my parents."
@@ -252,14 +260,14 @@ Listing press coverage or follower counts to prove something matters.
 
 #### Superficial -ing analyses
 
-Participle phrases tacked onto a sentence to add fake depth. Words: shared list §1.5.
+Participle phrases tacked onto a sentence to add fake depth. Word list: Superficial -ing analyses.
 
 - Bad: "She planted a lemon tree in the yard, symbolizing new beginnings and reflecting her love of home."
 - Better: "She planted a lemon tree in the yard the week they moved in."
 
 #### Promotional language
 
-Ad copy in place of plain description. Words: shared list §1.3.
+Ad copy in place of plain description. Word list: Promotional language and hype.
 
 - Bad: "Nestled in the hills, the town boasts breathtaking views and a vibrant food scene."
 - Better: "The town sits in the hills above the river, and the taco truck by the bridge is worth the drive."
@@ -282,14 +290,14 @@ A "Despite these challenges" or "looking ahead" passage that names problems vagu
 
 #### AI vocabulary
 
-Words that show up far more in model output than in human writing and tend to cluster. Words: shared list §1.2.
+Words that show up far more in model output than in human writing and tend to cluster. Word list: AI vocabulary.
 
 - Bad: "Additionally, the trip let us delve into the rich tapestry of local culture."
 - Better: "We also spent a morning at the fish market, where a vendor showed my daughter how to shuck an oyster."
 
 #### Copula avoidance
 
-"Serves as" or "features" where "is" or "has" would do. Words: shared list §1.6.
+"Serves as" or "features" where "is" or "has" would do. Word list: Copula avoidance.
 
 - Bad: "The guest room serves as an office and features a pull-out couch."
 - Better: "The guest room is also my office. It has a pull-out couch."
@@ -345,6 +353,35 @@ Typographic quotation marks in place of straight ones, a common sign of pasted m
 - Bad: She said “see you soon” and hung up.
 - Better: She said "see you soon" and hung up.
 
+### Document level
+
+Read the whole document before judging single sentences. These only show across a page.
+
+#### Repeated stock phrases
+
+The same opener or hedge in paragraph after paragraph: "we would like," "To be clear," "One more on." Each sentence reads fine alone. Three or more of one phrase is a finding. After rewriting, count again, because the replacement can become the new repeat.
+
+- Bad: "We would like to confirm the dates. We would like to check the price. We would also like to know who is coming."
+- Better: "Can you confirm the dates and the price? It would also help to know who is coming."
+
+#### Signposting transitions
+
+A sentence that announces the next point instead of making it: "There is a second half to this," "One more on the same subject," "Worth being clear about."
+
+- Bad: "There is a second half to this, which is the payment date."
+- Better: "The second question is how far the first payment date can move."
+
+#### Abstract nouns as metaphor
+
+An abstract noun standing in for a literal one: "the shape of the request," "every shape we tried." Use the literal word: format, structure, field, version.
+
+- Bad: "We tried every shape of the booking form."
+- Better: "We tried three versions of the booking form."
+
+#### Facts that do not add up
+
+Counts that do not sum, or a claim contradicted further down. This is not a sign of AI writing, but report it. Never invent the missing fact: drop the unsupported figure or ask the writer.
+
 ### Communication
 
 #### Chatbot artifacts and sycophancy
@@ -353,6 +390,13 @@ Correspondence pasted in as content, or praise for the question or the person be
 
 - Bad: "Great question! Here's what I'd suggest for the toast. I hope this helps!"
 - Better: "Start the toast with the story about the canoe."
+
+#### Firm or defensive register
+
+In letters and questions to a supplier, partner or anyone outside, phrasing that pre-empts objections and sounds curt: "we need confirmed," "we do not want to find," "is not a problem for us. We are not asking for one," a bold **not**. Write plain requests and neutral statements of what follows. Keep the question itself clear.
+
+- Bad: "We need confirmed which date you intend. We do not want to find out in November."
+- Better: "Please tell us which date you intend. It would help to know now rather than in November."
 
 #### Knowledge-cutoff disclaimers
 
@@ -368,14 +412,23 @@ Run this over every draft before you send it.
 - Check that the first sentence carries the point and that the opening holds no throat-clearing, praise or chatbot opener.
 - Confirm no paragraph runs past four sentences or covers two ideas, and that a blank line follows each one.
 - Merge any one-sentence paragraph that only repeats the point before it, and rewrite any question or colon that holds back the point.
-- Search for em dashes (—) and en dashes (–) and rewrite every hit, using a hyphen for ranges.
+- Search for em dashes (—) and en dashes (–). Keep at most one per paragraph, rewrite the rest by grammar, and use a hyphen for ranges.
 - Read each "not," "isn't," "but" and "yet" and rewrite any that set up antithesis, corrective negation, a negative parallelism or a contrasting pair.
 - Delete the last sentence of a paragraph if removing it loses nothing the reader needs.
 - Find every caveat, disclaimer, counterpoint, offer to say more and upbeat ending. Fold a caveat into the claim if it changes the claim, and delete the rest.
 - Find every run of three items or adjectives in prose and cut it to the ones that matter.
 - Break up neighboring sentences that share a frame, and any three in a row of about the same length.
-- Scan for every word and phrase in the shared list (§1.1-§1.9).
+- Scan for every word and phrase in `word-list.md`.
 - Replace each vague claim with a name or a number, or cut it.
 - In a message read soon after sending, turn recent exact dates into relative ones, and name the source of any secondhand news.
 - Rewrite any sentence that hides who did what.
 - Check headings for sentence case, strip decorative bold and emoji, and straighten curly quotes.
+- Count repeated openers and hedges across the whole text, rewrite past the second use, and count again after the fixes.
+- In a message to someone outside, rewrite firm or defensive phrasing as a plain request.
+
+## Do not over-correct
+
+- One group of three, used on purpose, can stay.
+- A strong, specific verb is not a tell because it is vivid.
+- Real enthusiasm from a writer or brand that is enthusiastic can stay.
+- Text that is specific, varied and earns its claims stays, even when it is polished. Polish is not the tell; vagueness, symmetry and hype are.
