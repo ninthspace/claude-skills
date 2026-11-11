@@ -1,6 +1,6 @@
 ---
 name: de-ai-copy
-description: Audit customer-facing text and graphics in a repository (Laravel by default, any stack otherwise) and propose conservative edits that remove the constructs, vocabulary, and presentational habits that read as obviously AI-generated. Use when asked to "de-AI this copy", "remove AI tells", "make this sound human", "this reads like ChatGPT wrote it", "audit the marketing copy", or "humanise the UI text".
+description: Audit customer-facing text and graphics in a repository (Laravel by default, any stack otherwise) and propose conservative edits that remove the constructs, vocabulary, and presentational habits that read as obviously AI-generated. Use when asked to "de-AI this copy", "remove AI tells", "make this sound human", "this reads like ChatGPT wrote it", "audit the marketing copy", or "humanise the UI text". For a draft pasted into the conversation, or new writing (an email, letter, post or note), use natural-voice instead.
 license: MIT
 metadata:
   author: ninthspace
@@ -77,7 +77,7 @@ For correspondence to an outside party, also check register:
 
 **After every batch of rewrites, re-count the replacement phrases across the whole file.** A fix must not create a new repetition. Softening four "we would rather" into "we would like" produced seven "we would like"; vary the construction instead (state the question directly, "please tell us …", "it would help to know …", or a plain statement of fact).
 
-Load `references/ai-tells.md` for the full taxonomy with examples and rewrites. The categories:
+Load `references/ai-tells.md` for the full taxonomy with examples and rewrites. Its section 1 is the word list shared with `natural-voice`; edit words there only. The categories:
 
 - **Lexical** — inflated/filler vocabulary (leverage, seamless, effortless, elevate, unlock, empower, robust, delve, tailored, "designed to", "in today's fast-paced world").
 - **Structural** — rule-of-three triads, "it's not just X, it's Y", "not only… but also", relentless symmetric parallelism, hedged throat-clearing intros, vague reassurance with no concrete detail.
@@ -144,6 +144,10 @@ Degrade gracefully. Drop the Laravel-specific paths and detect the equivalent su
 - Same out-of-scope rules apply (comments, internal docs, dev strings).
 
 The tell taxonomy and posture are stack-independent; only the file map changes.
+
+## Related skill
+
+`natural-voice` writes new text and edits drafts given in the conversation against a voice profile. Use it, not this skill, when the text is not in project files.
 
 ## Guardrails
 

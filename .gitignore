@@ -16,3 +16,6 @@ settings.local.json
 # Python bytecode from running skill scripts locally
 __pycache__/
 *.pyc
+
+# natural-voice profiles hold quotes from private writing samples
+.claude/skills/natural-voice/profiles/

@@ -6,30 +6,98 @@ Match rewrites to the project's established voice. The examples below are illust
 
 ---
 
-## 1. Lexical tells (vocabulary)
+## 1. Lexical tells (shared word list)
 
-Words and phrases that cluster heavily in LLM output. Presence of one isn't damning; density is the tell.
+This section is the one word list for both `de-ai-copy` and `natural-voice`. `natural-voice` reads it by path from its profile rules, so add or remove words here, not in either skill's own files. The subsection names match the rule names in `natural-voice/references/voice.md`.
 
-| Flagged word/phrase | Why | Rewrite toward |
-|---|---|---|
-| leverage / leveraging | corporate filler for "use" | use, with |
-| seamless / seamlessly | empty intensifier | say what actually connects, or cut |
-| effortless / effortlessly | unearned claim | show the steps; quantify if true |
-| elevate / unlock / empower | inflated benefit verbs | the concrete thing it does |
-| robust / powerful | vague reassurance | the specific capability |
-| delve / dive into / navigate | LLM stock verbs | look at, go through, use |
-| tailored / bespoke / curated | overused for "customised" | name what's customised |
-| designed to / built to | hedged capability | "it does X" |
-| cutting-edge / state-of-the-art / next-generation | unearned superlative | drop, or cite the actual advantage |
-| game-changer / game-changing / revolutionary | hype | the measurable difference |
-| in today's fast-paced world / in the digital age | throat-clearing opener | delete; start with the point |
-| whether you're X or Y | false-inclusive framing | address the actual reader |
-| at the end of the day / when it comes to | filler connectives | cut |
-| rich / comprehensive / holistic / wide range of | vague scale claims | the actual number or scope |
-| shape (of a request, response, problem) | abstract noun as metaphor | format, structure, fields, variation |
-| worth confirming / worth being clear / worth asking about | stock hedge; repeats down a page | state the point or the question |
+Presence of one word isn't damning; density is the tell. Each entry targets a pattern, so a listed word used in its literal sense passes: "drive to the coast", "the lake reflects the mountains", "a key for the shed".
 
 **Heuristic:** if removing the word changes nothing about meaning, it's filler.
+
+### 1.1 Corporate-register verbs
+
+| Flagged word/phrase | Rewrite toward |
+|---|---|
+| leverage / leveraging, utilize / utilise | use, with |
+| facilitate, enable | the action itself: "lets you", "helps", or name who does what |
+| underscore, reflect (figurative), drive (figurative) | say the plain relation: shows, comes from, causes |
+| elevate / unlock / empower | the concrete thing it does |
+| designed to / built to | "it does X" |
+
+### 1.2 AI vocabulary
+
+Words that show up far more in model output than in human writing and tend to cluster.
+
+| Flagged word/phrase | Rewrite toward |
+|---|---|
+| additionally | also, or start a new sentence |
+| align with | matches, fits, agrees with |
+| crucial, key (adjective), valuable | say why it matters, or cut |
+| delve / dive into / navigate | look at, go through, use |
+| emphasizing / emphasising, highlight (verb), showcase | shows, or state the fact itself |
+| enduring, intricate / intricacies, interplay | the specific quality or relation |
+| enhance, fostering, garner | improves, builds, gets |
+| landscape (abstract), tapestry | the actual field, set or mix of things |
+| testament, pivotal | see 1.4 |
+| shape (of a request, response, problem) | format, structure, fields, variation |
+
+### 1.3 Promotional language and hype
+
+| Flagged word/phrase | Rewrite toward |
+|---|---|
+| seamless / seamlessly | say what actually connects, or cut |
+| effortless / effortlessly | show the steps; quantify if true |
+| robust / powerful | the specific capability |
+| tailored / bespoke / curated | name what's customised |
+| cutting-edge / state-of-the-art / next-generation | drop, or cite the actual advantage |
+| game-changer / game-changing / revolutionary | the measurable difference |
+| boasts, stunning, nestled, breathtaking, must-visit, vibrant | plain description with one specific detail |
+| rich / comprehensive / holistic / wide range of | the actual number or scope |
+
+### 1.4 Inflated significance
+
+| Flagged word/phrase | Rewrite toward |
+|---|---|
+| pivotal moment, testament to, a new chapter, setting the stage, marks a turning point | what happened, with a date or a reason |
+
+### 1.5 Superficial -ing analyses
+
+| Flagged word/phrase | Rewrite toward |
+|---|---|
+| ensuring, highlighting, reflecting, symbolizing / symbolising, underscoring (tacked on as a participle phrase) | cut the phrase, or make it its own sentence with a real claim |
+
+### 1.6 Copula avoidance
+
+| Flagged word/phrase | Rewrite toward |
+|---|---|
+| serves as, stands as, features, boasts (in place of is/has) | is, has |
+
+### 1.7 Hedging qualifiers
+
+| Flagged word/phrase | Rewrite toward |
+|---|---|
+| potentially, arguably, somewhat, it seems, may possibly | cut; if the doubt is real, say it once and say where it comes from |
+| worth confirming / worth being clear / worth asking about | state the point or the question |
+
+### 1.8 Filler intensifiers and filler phrases
+
+| Flagged word/phrase | Rewrite toward |
+|---|---|
+| genuinely, really, truly, actually, very, incredibly | cut |
+| in order to | to |
+| due to the fact that | because |
+| at this point in time | now |
+| has the ability to | can |
+| it is important to note that | delete |
+| at the end of the day / when it comes to | cut |
+
+### 1.9 Stock openers and crutches
+
+| Flagged word/phrase | Rewrite toward |
+|---|---|
+| in today's fast-paced world / in the digital age | delete; start with the point |
+| whether you're X or Y | address the actual reader |
+| Let's be honest, Make no mistake, Here's the thing, The truth is | delete; make the point |
 
 ---
 
